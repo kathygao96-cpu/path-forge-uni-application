@@ -1,0 +1,13 @@
+run = "node server.js"
+language = "nodejs"
+entrypoint = "server.js"
+
+[env]
+PORT = "3000"
+
+[nix]
+channel = "stable-22_11"
+
+[deployment]
+run = ["sh", "-c", "node server.js"]
+deploymentTarget = "cloudrun"

@@ -1,0 +1,283 @@
+{
+  "programRequirementToDim": {
+    "math": "academic",
+    "cs_fundamentals": "academic",
+    "programming": "experience",
+    "projects": "experience",
+    "research": "experience",
+    "english": "execution",
+    "statement": "clarity"
+  },
+  "majorToTargetGap": {
+    "materials": {
+      "ai_ds": 3,
+      "cs": 3,
+      "microe": 2,
+      "ee": 2,
+      "telecom": 3,
+      "me": 2,
+      "materials": 0,
+      "chem": 1,
+      "bio": 2,
+      "cross": 1
+    },
+    "chem": {
+      "materials": 1,
+      "chem": 0,
+      "bio": 2,
+      "microe": 3,
+      "me": 3,
+      "ee": 3,
+      "cs": 3,
+      "ai_ds": 3
+    },
+    "me": {
+      "me": 0,
+      "materials": 1,
+      "ee": 2,
+      "microe": 3,
+      "telecom": 3,
+      "cs": 3,
+      "ai_ds": 3,
+      "cross": 1
+    },
+    "ee": {
+      "ee": 0,
+      "telecom": 1,
+      "microe": 1,
+      "cs": 1,
+      "ai_ds": 2,
+      "me": 2,
+      "materials": 2
+    },
+    "telecom": {
+      "telecom": 0,
+      "ee": 1,
+      "cs": 1,
+      "microe": 1,
+      "ai_ds": 2,
+      "me": 3
+    },
+    "microe": {
+      "microe": 0,
+      "ee": 1,
+      "materials": 1,
+      "telecom": 1,
+      "cs": 2,
+      "ai_ds": 2
+    },
+    "cs": {
+      "cs": 0,
+      "ai_ds": 0,
+      "telecom": 1,
+      "ee": 1,
+      "microe": 2,
+      "me": 3,
+      "materials": 3
+    },
+    "ai_ds": {
+      "ai_ds": 0,
+      "cs": 0,
+      "ee": 1,
+      "microe": 1,
+      "telecom": 1,
+      "bio": 2
+    },
+    "bio": {
+      "bio": 0,
+      "chem": 1,
+      "materials": 2,
+      "me": 3,
+      "cs": 3
+    },
+    "business": {
+      "business": 0,
+      "cs": 3,
+      "ai_ds": 3,
+      "me": 3,
+      "materials": 3
+    },
+    "cross": {
+      "cross": 0,
+      "cs": 1,
+      "ai_ds": 1,
+      "me": 1,
+      "materials": 1
+    },
+    "other": {
+      "other": 0,
+      "me": 1,
+      "materials": 1,
+      "ee": 1
+    }
+  },
+  "actionsByDim": {
+    "academic": [
+      {
+        "title": "把 GPA 改成百分制 + 标注排名",
+        "goal": "招生官第一眼看到的就是百分制均分。百分制比 4.0 制更直观，排名能直接说话。",
+        "how": [
+          "成绩单按百分制重算（GPA 4.0 ≈ 90 分；3.7 ≈ 85；3.3 ≈ 80）",
+          "排名靠前的（前 5%/10%/20%）一定在简历显眼位置标出",
+          "如果某些核心课是 90+，单独列一行「Selected Courses with Grade」"
+        ],
+        "timeCost": "1 天",
+        "evidence": ["新版简历"],
+        "friendQuote": "GPA 用百分制，排名好看的话也标注。"
+      },
+      {
+        "title": "按目标 JD 重排核心课顺序",
+        "goal": "让招生委员会/HR 一眼看到「你的课跟我们的项目/岗位高度对齐」。",
+        "how": [
+          "找 3 份目标项目/岗位的 JD",
+          "把简历核心课栏，按 JD 关键词（如『半导体物理』『信号处理』『线性代数』）重新排序",
+          "课程代码删掉，只留课程名"
+        ],
+        "timeCost": "半天",
+        "evidence": ["按 JD 定制的 2-3 版核心课列表"],
+        "friendQuote": "课程根据岗位调整选取尽可能垂直的。"
+      }
+    ],
+    "gap": [
+      {
+        "title": "用 1 个垂直项目证明你能跨过去",
+        "goal": "跨专业最致命的不是『没学过』，是『没做过』。一个端到端项目是最硬的证据。",
+        "how": [
+          "选定目标方向最核心的 1-2 个技能（如：转半导体→TCAD/SPICE；转 ML→PyTorch+1 个 Kaggle 项目）",
+          "从复现一个公开 demo 开始，写 README 和复盘报告",
+          "把它做成 GitHub 仓库或 PDF，1 页讲清楚问题/方法/指标"
+        ],
+        "timeCost": "3-5 周",
+        "evidence": ["GitHub 仓库", "1 页技术总结"]
+      },
+      {
+        "title": "找一段相关方向的实习（不限大厂）",
+        "goal": "「实习 ≈ 科研，最重要是垂直度」。哪怕小公司，工作内容垂直就行。",
+        "how": [
+          "锁定目标方向 5-10 家公司（含中小厂）",
+          "通过小红书/牛客/校友群找内推",
+          "暑期/学期内 8-12 周即可"
+        ],
+        "timeCost": "2-3 个月在岗",
+        "evidence": ["实习证明", "项目 PR/Demo"],
+        "friendQuote": "工作内容 >> 公司名气。"
+      }
+    ],
+    "experience": [
+      {
+        "title": "把每个项目改写成「指标+贡献」形式",
+        "goal": "HR 看简历只用 6-10 秒。没有量化的项目等于没做过。",
+        "how": [
+          "每条项目改写为：问题 → 你的方法 → 量化指标（精度↑/效率↑/成本↓）→ 你的贡献比例",
+          "至少做一个可展示产出：Demo / 视频 / 仓库 / Poster",
+          "项目按「新→旧」+「与目标方向相关→无关」双排序"
+        ],
+        "timeCost": "1-2 周",
+        "evidence": ["新版简历项目段"],
+        "friendQuote": "所有的『提高 XX 效率/性能』最好量化，可以适度美化。"
+      },
+      {
+        "title": "把论文署名信息补上简历",
+        "goal": "一作是申研重要加分项；二作/共同作者也要说清楚",
+        "how": [
+          "明确标注：First Author / Co-First / Second Author / Co-Author",
+          "在投/已发表区分写明",
+          "若只是参与，可以写 Project Member（不主张挂二作充数）"
+        ],
+        "timeCost": "半天",
+        "evidence": ["简历论文段"],
+        "friendQuote": "论文和专利最好标明作者排序（一作是加分项）。"
+      }
+    ],
+    "clarity": [
+      {
+        "title": "用『反向选法』锁定主方向",
+        "goal": "想清楚『绝对不去』的，剩下就是你的路。",
+        "how": [
+          "列 3 个你绝对不去的行业（理由：钱少？卷？无趣？）",
+          "列 3 个你绝对不去的岗位（驻厂？销售？倒班？）",
+          "剩下的行业-岗位组合中挑 Top 3 作为主线"
+        ],
+        "timeCost": "1 个晚上",
+        "evidence": ["1 页方向清单"],
+        "friendQuote": "考虑自己想做的可能比较难，换个思路：先考虑自己一定不做的、不去的。"
+      },
+      {
+        "title": "把目标公司清单做出来",
+        "goal": "每国每行业 5-10 家，含 JD/截止日期/内推渠道——这就是你的『投递地图』。",
+        "how": [
+          "用 Notion/飞书做一张表：公司 × 岗位 × 城市 × 薪资带 × 截止 × 内推人",
+          "薪资带用 OfferShow 小程序查",
+          "公司风评用 脉脉/牛客/知乎 查"
+        ],
+        "timeCost": "1 周",
+        "evidence": ["投递地图（公司清单表）"]
+      }
+    ],
+    "execution": [
+      {
+        "title": "做一份中英双语简历",
+        "goal": "一页中文 + 一页英文，看起来『well prepared』。",
+        "how": [
+          "中文简历前置：教育 → 技能简介 → 项目/科研 → 实习",
+          "英文简历同结构，但要适配国际 HR 的阅读习惯",
+          "拍一张正式职业照，用于简历和各类平台"
+        ],
+        "timeCost": "1 周",
+        "evidence": ["中英双语简历"],
+        "friendQuote": "准备一页全英文的附在后面，简历可以变成一页中文一页英文（well prepared）。"
+      },
+      {
+        "title": "建立内推渠道清单",
+        "goal": "投半导体优先找人推荐推荐推荐。内推事半功倍。",
+        "how": [
+          "加入：IC 加油站 / IC 探索者 / IC 研究社 / 数字 IC 打工人 / IC 芯探 公众号",
+          "活跃在：小红书（搜公司名+内推码）/ 牛客网 / 脉脉 / 校友群",
+          "维护一张『接口人』表：姓名 × 公司 × 联系方式 × 答应帮内推日期"
+        ],
+        "timeCost": "1 周建立 + 长期维护",
+        "evidence": ["接口人表"]
+      },
+      {
+        "title": "按申请季+秋招倒推时间线",
+        "goal": "提前批 6 月 / 秋招 9-12 月 / 春招 + 暑期实习 1-4 月 / 终极秋招 7-10 月——心里有日历才不慌。",
+        "how": [
+          "用飞书文档记录投递过程和状态",
+          "标记每个节点的关键任务",
+          "毕业证时间 / 到岗时间提前沟通好"
+        ],
+        "timeCost": "1 天",
+        "evidence": ["申请-求职甘特图"]
+      }
+    ],
+    "fit": [
+      {
+        "title": "把生活方式偏好写下来",
+        "goal": "倒班 / 驻厂 / WLB / 钱 vs 稳定——这些没想清楚，第一个 offer 来了就会犹豫。",
+        "how": [
+          "回答 5 个问题：能否倒班 / 能否驻厂 / 钱排第几位 / 户口必须吗 / 城市硬约束",
+          "把每个答案写下来给自己看",
+          "选 offer 时直接对照"
+        ],
+        "timeCost": "1 个晚上",
+        "evidence": ["生活方式偏好清单"]
+      }
+    ]
+  },
+  "actionsByCareer": {
+    "career_ml": [],
+    "career_semi_materials": [
+      {
+        "title": "向 ASML/AMAT/Lam/TEL/KLA 五大 vendor 优先递简历",
+        "goal": "材料人最佳归宿之一，汇集顶级材料学生",
+        "how": [
+          "官网直投 + 脉脉/校友群找在职校友",
+          "提前学：真空/流体/失效分析",
+          "国产 vendor (北方华创/中微/新凯来/宇量昇) 优先去研发"
+        ],
+        "timeCost": "2-3 周",
+        "evidence": ["接口人表 + 内推记录"]
+      }
+    ]
+  }
+}

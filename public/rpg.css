@@ -1,0 +1,1269 @@
+/* 蒸汽锻造厂 · 匠人工坊沉浸式界面 */
+body.rpg-mode {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body.rpg-mode .container {
+  max-width: 920px;
+  padding: 16px 16px 28px;
+}
+
+body.rpg-mode .nav {
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+/* ===== 锻造场景 ===== */
+.rpg-scene {
+  position: relative;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  background: linear-gradient(180deg, rgba(24,16,10,.95) 0%, rgba(35,24,16,.8) 45%, rgba(20,14,8,.98) 100%);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.04);
+  min-height: min(72vh, 640px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 铆钉装饰 */
+.rpg-scene::after {
+  content: "";
+  position: absolute;
+  bottom: 4px; left: 4px; width: 6px; height: 6px; border-radius: 50%;
+  background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.1);
+  pointer-events: none; z-index: 3;
+}
+
+.rpg-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,83,42,.1), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(201,160,80,.06), transparent 50%);
+  pointer-events: none;
+}
+
+.rpg-scene.event-mode::before {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 20%, rgba(212,83,42,.15), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 20% 90%, rgba(201,160,80,.08), transparent 50%);
+}
+
+.rpg-scene.event-mode {
+  animation: scenePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes scenePulse {
+  0%, 100% { box-shadow: var(--shadow), 0 0 0 0 rgba(212,83,42,0); }
+  50% { box-shadow: var(--shadow), 0 0 40px rgba(212,83,42,.12); }
+}
+
+/* ===== HUD 头部 ===== */
+.rpg-hud {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--border);
+  background: rgba(0,0,0,.35);
+  flex-wrap: wrap;
+}
+
+.rpg-hud-chapter {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: var(--font-display);
+  letter-spacing: .06em;
+}
+
+.rpg-hud-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rpg-stat {
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.82);
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+}
+
+.rpg-stat.accent {
+  border-color: rgba(212,83,42,.5);
+  background: rgba(212,83,42,.12);
+  color: var(--accent2);
+}
+
+.rpg-stat.gold {
+  border-color: rgba(201,160,80,.45);
+  background: rgba(201,160,80,.1);
+  color: var(--accent2);
+}
+
+/* ===== 锻造舞台 ===== */
+.rpg-stage {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  min-height: 0;
+}
+
+/* ===== 导师立绘 + 对话框 ===== */
+.rpg-npc-block {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  margin-bottom: 12px;
+}
+
+.rpg-npc-portrait {
+  flex-shrink: 0;
+  width: 120px;
+  margin-right: -2px;
+  z-index: 2;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,.5));
+  transition: transform .3s ease;
+}
+
+.rpg-npc-portrait.event {
+  animation: npcShake .4s ease;
+}
+
+@keyframes npcShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px) rotate(-1deg); }
+  75% { transform: translateX(3px) rotate(1deg); }
+}
+
+.rpg-npc-svg {
+  display: block;
+  width: 120px;
+  height: auto;
+  border-radius: 4px 4px 4px 4px;
+}
+
+.rpg-npc-block .rpg-dialogue {
+  flex: 1;
+  min-width: 0;
+  margin-left: 0;
+  border-radius: 4px;
+}
+
+.rpg-npc-block .rpg-dialogue::before {
+  left: -10px;
+  bottom: 28px;
+  border-right-color: rgba(0,0,0,.35);
+  border-left-color: transparent;
+}
+
+.rpg-player-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+
+.rpg-player-portrait {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.rpg-player-svg {
+  width: 40px;
+  height: 40px;
+  display: block;
+}
+
+.rpg-player-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .rpg-npc-block {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .rpg-npc-portrait {
+    width: 88px;
+    margin: 0 auto -8px;
+  }
+  .rpg-npc-svg {
+    width: 88px;
+    margin: 0 auto;
+  }
+  .rpg-npc-block .rpg-dialogue {
+    border-radius: 4px;
+  }
+  .rpg-npc-block .rpg-dialogue::before {
+    display: none;
+  }
+}
+
+.rpg-dialogue-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.rpg-dialogue {
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  background: rgba(0,0,0,.45);
+  padding: 16px 18px;
+  min-height: 96px;
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.rpg-dialogue::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  bottom: 28px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-right-color: rgba(0,0,0,.45);
+}
+
+@media (max-width: 640px) {
+  .rpg-dialogue::before { display: none; }
+}
+
+.rpg-speaker {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent2);
+  margin-bottom: 8px;
+  letter-spacing: .04em;
+  font-family: var(--font-display);
+}
+
+.rpg-speaker.event {
+  color: #ff8fa3;
+}
+
+.rpg-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+  min-height: 1.6em;
+}
+
+.rpg-text .cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--accent2);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink .8s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ===== 选项按钮 ===== */
+.rpg-choices {
+  display: grid;
+  gap: 8px;
+}
+
+.rpg-choice {
+  appearance: none;
+  text-align: left;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 2px;
+  border: 2px solid var(--border);
+  background: rgba(255,255,255,.03);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  font-family: inherit;
+}
+
+.rpg-choice:hover {
+  transform: translateX(4px);
+  background: rgba(212,83,42,.1);
+  border-color: rgba(212,83,42,.45);
+}
+
+.rpg-choice.selected {
+  background: rgba(212,83,42,.2);
+  border-color: rgba(212,83,42,.65);
+}
+
+.rpg-choice.event:hover {
+  background: rgba(212,83,42,.12);
+  border-color: rgba(212,83,42,.45);
+}
+
+.rpg-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.rpg-input-row input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 2px;
+  border: 2px solid var(--border);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  font-size: 16px;
+}
+
+.rpg-input-row input:focus,
+.rpg-input-row textarea:focus {
+  outline: none;
+  border-color: rgba(212,83,42,.5);
+}
+
+/* ===== 底部操作栏 ===== */
+.rpg-footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 2px solid var(--border);
+  background: rgba(0,0,0,.35);
+}
+
+.rpg-footer .hint {
+  margin: 0;
+  font-size: 12px;
+  flex: 1;
+}
+
+/* ===== 角色创建 / 学徒登记 ===== */
+.rpg-create {
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.rpg-create h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  color: var(--text);
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+}
+
+.rpg-class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+  min-height: 80px;
+  position: relative;
+  z-index: 2;
+}
+
+.rpg-create {
+  flex: 1;
+  overflow-y: auto;
+  max-height: min(52vh, 480px);
+}
+
+.rpg-class-card {
+  padding: 14px;
+  border-radius: 2px;
+  border: 2px solid var(--border);
+  background: rgba(255,255,255,.02);
+  color: var(--text);
+  cursor: pointer;
+  transition: all .15s ease;
+  text-align: center;
+  font-family: inherit;
+}
+
+.rpg-class-card:hover {
+  transform: translateY(-2px);
+  background: rgba(212,83,42,.1);
+  border-color: rgba(212,83,42,.3);
+}
+
+.rpg-class-card.picked {
+  border-color: rgba(212,83,42,.7);
+  background: rgba(212,83,42,.18);
+  box-shadow: 0 0 24px rgba(212,83,42,.2);
+}
+
+.rpg-class-icon {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.rpg-class-name {
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.rpg-class-desc {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ===== 章节条 ===== */
+.rpg-chapters {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px;
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+  background: rgba(0,0,0,.25);
+}
+
+.rpg-chapter-dot {
+  flex-shrink: 0;
+  font-size: 10px;
+  padding: 4px 12px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  color: rgba(255,255,255,.45);
+  white-space: nowrap;
+  font-family: var(--font-display);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.rpg-chapter-dot.active {
+  color: #fff;
+  border-color: rgba(212,83,42,.6);
+  background: rgba(212,83,42,.2);
+}
+
+.rpg-chapter-dot.done {
+  color: var(--accent2);
+  border-color: rgba(201,160,80,.4);
+  background: rgba(201,160,80,.08);
+}
+
+/* ===== 全屏遮罩：通关 / 转场 ===== */
+.rpg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(10,6,4,.92);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+
+.rpg-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.rpg-overlay-card {
+  max-width: 420px;
+  width: 100%;
+  padding: 28px 24px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  background: linear-gradient(180deg, rgba(40,28,18,.95), rgba(20,14,8,.98));
+  box-shadow: var(--shadow);
+  text-align: center;
+  position: relative;
+  transform: scale(.92);
+  transition: transform .35s cubic-bezier(.34,1.4,.64,1);
+}
+
+.rpg-overlay-card::before,
+.rpg-overlay-card::after {
+  content: "";
+  position: absolute;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.1);
+  bottom: 4px;
+}
+.rpg-overlay-card::before { left: 4px; }
+.rpg-overlay-card::after { right: 4px; }
+
+.rpg-overlay.show .rpg-overlay-card {
+  transform: scale(1);
+}
+
+.rpg-overlay-rank {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.rpg-overlay-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: var(--text);
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+}
+
+.rpg-overlay-sub {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 20px;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+/* ===== 战报页海报头 ===== */
+body.report-rpg .report-hero {
+  margin-top: 14px;
+  padding: 22px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  background: linear-gradient(135deg, rgba(212,83,42,.18), rgba(201,160,80,.1));
+  box-shadow: var(--shadow);
+  text-align: center;
+  position: relative;
+}
+
+body.report-rpg .report-hero::before,
+body.report-rpg .report-hero::after {
+  content: "";
+  position: absolute;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.1);
+  bottom: 4px;
+}
+body.report-rpg .report-hero::before { left: 4px; }
+body.report-rpg .report-hero::after { right: 4px; }
+
+body.report-rpg .report-hero .rank {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+body.report-rpg .report-hero .title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+}
+
+body.report-rpg .report-hero .offer {
+  font-size: 14px;
+  color: var(--accent2);
+}
+
+.rpg-fade-in {
+  animation: fadeSlideIn .45s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 滑块（Gauge 表盘） ===== */
+.rpg-slider-wrap {
+  position: relative;
+  padding: 8px 0 24px;
+}
+
+.rpg-slider-wrap input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, rgba(212,83,42,.35), rgba(201,160,80,.35));
+  outline: none;
+  cursor: pointer;
+}
+
+.rpg-slider-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #b53d1e);
+  border: 2px solid rgba(255,255,255,.2);
+  box-shadow: 0 0 12px rgba(212,83,42,.4);
+  cursor: pointer;
+  transition: transform .15s ease;
+}
+
+.rpg-slider-wrap input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.rpg-slider-val {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent2);
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+}
+
+.rpg-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ===== 星级评分 ===== */
+.rpg-star-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.rpg-star {
+  font-size: 28px;
+  cursor: pointer;
+  opacity: .35;
+  transition: opacity .12s ease, transform .12s ease;
+  line-height: 1;
+  user-select: none;
+}
+
+.rpg-star:hover,
+.rpg-star.on {
+  opacity: 1;
+}
+
+.rpg-star:hover {
+  transform: scale(1.2);
+}
+
+.rpg-star-label {
+  font-size: 12px;
+  color: var(--accent2);
+  font-weight: 700;
+  margin-left: 8px;
+  font-family: var(--font-display);
+}
+
+/* ===== 反馈气泡 ===== */
+.rpg-feedback-bubble {
+  position: fixed;
+  z-index: 2000;
+  pointer-events: none;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: .03em;
+  animation: bubbleFloat 1.8s ease-out forwards;
+  max-width: 280px;
+  text-align: center;
+}
+
+.rpg-feedback-bubble.positive {
+  background: rgba(40,90,40,.92);
+  border: 1px solid rgba(100,200,100,.4);
+  color: #c8f0c8;
+  box-shadow: 0 4px 20px rgba(40,90,40,.3);
+}
+
+.rpg-feedback-bubble.neutral {
+  background: rgba(60,50,30,.92);
+  border: 1px solid rgba(201,160,80,.4);
+  color: #f0e0b0;
+  box-shadow: 0 4px 20px rgba(60,50,30,.3);
+}
+
+.rpg-feedback-bubble.warn {
+  background: rgba(90,30,20,.92);
+  border: 1px solid rgba(212,83,42,.5);
+  color: #ffc0b0;
+  box-shadow: 0 4px 20px rgba(90,30,20,.3);
+}
+
+@keyframes bubbleFloat {
+  0% { opacity: 0; transform: translateY(12px) scale(.92); }
+  15% { opacity: 1; transform: translateY(0) scale(1); }
+  70% { opacity: 1; transform: translateY(-8px); }
+  100% { opacity: 0; transform: translateY(-28px) scale(.95); }
+}
+
+/* ===== 屏幕闪红 ===== */
+.rpg-screen-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: rgba(212,83,42,0);
+  pointer-events: none;
+  animation: screenFlash .6s ease-out forwards;
+}
+
+@keyframes screenFlash {
+  0% { background: rgba(212,83,42,.25); }
+  100% { background: rgba(212,83,42,0); }
+}
+
+/* ===== 情境横幅 ===== */
+.rpg-event-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(.85);
+  z-index: 10;
+  padding: 14px 32px;
+  border-radius: 4px;
+  border: 2px solid rgba(212,83,42,.6);
+  background: linear-gradient(135deg, rgba(60,15,10,.95), rgba(30,8,5,.98));
+  color: #ff8fa3;
+  font-size: 20px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  letter-spacing: .08em;
+  pointer-events: none;
+  opacity: 0;
+  animation: eventBannerPop 1.4s ease-out forwards;
+  text-shadow: 0 0 20px rgba(212,83,42,.4);
+  white-space: nowrap;
+}
+
+@keyframes eventBannerPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
+  20% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  35% { transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+}
+
+/* ===== 路径地图进度条 ===== */
+.rpg-path-map {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 10px 16px 10px;
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+  background: rgba(0,0,0,.25);
+}
+
+.rpg-path-node {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rpg-path-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: rgba(255,255,255,.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all .3s ease;
+}
+
+.rpg-path-dot .dot-icon {
+  opacity: .5;
+  font-size: 11px;
+}
+
+.rpg-path-dot.active {
+  border-color: rgba(212,83,42,.7);
+  background: rgba(212,83,42,.25);
+  box-shadow: 0 0 12px rgba(212,83,42,.25);
+}
+
+.rpg-path-dot.active .dot-icon {
+  opacity: 1;
+}
+
+.rpg-path-dot.done {
+  border-color: rgba(201,160,80,.6);
+  background: rgba(201,160,80,.2);
+}
+
+.rpg-path-dot.done .dot-icon {
+  opacity: 1;
+}
+
+.rpg-path-label {
+  font-size: 10px;
+  color: rgba(255,255,255,.4);
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+  white-space: nowrap;
+  transition: color .3s ease;
+}
+
+.rpg-path-node.active .rpg-path-label {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.rpg-path-node.done .rpg-path-label {
+  color: var(--accent2);
+}
+
+.rpg-path-line {
+  flex-shrink: 0;
+  width: 24px;
+  height: 2px;
+  background: var(--border);
+  margin: 0 6px;
+  position: relative;
+  transition: background .3s ease;
+}
+
+.rpg-path-line.done {
+  background: linear-gradient(90deg, rgba(201,160,80,.5), rgba(201,160,80,.3));
+}
+
+.rpg-path-line::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: -2px;
+  width: 0;
+  height: 0;
+  border: 3px solid transparent;
+  border-left-color: var(--border);
+  transition: border-left-color .3s ease;
+}
+
+.rpg-path-line.done::after {
+  border-left-color: rgba(201,160,80,.4);
+}
+
+@media (max-width: 640px) {
+  .rpg-path-line { width: 14px; margin: 0 3px; }
+  .rpg-path-label { font-size: 9px; }
+  .rpg-path-dot { width: 18px; height: 18px; }
+}
+
+/* ===== 掉落物 ===== */
+.rpg-drop-item {
+  position: fixed;
+  z-index: 1800;
+  font-size: 28px;
+  cursor: pointer;
+  pointer-events: auto;
+  animation: dropFall 1.2s ease-out forwards, dropFloat 2s ease-in-out 1.2s infinite;
+  filter: drop-shadow(0 0 8px rgba(212,83,42,.4));
+  user-select: none;
+}
+
+.rpg-drop-item.rare { filter: drop-shadow(0 0 12px rgba(100,150,255,.5)); }
+.rpg-drop-item.epic { filter: drop-shadow(0 0 14px rgba(180,80,220,.5)); }
+.rpg-drop-item.legendary { filter: drop-shadow(0 0 18px rgba(255,200,50,.6)); animation: dropFall 1.2s ease-out forwards, dropFloat 2s ease-in-out 1.2s infinite, legendaryPulse 1.5s ease-in-out infinite; }
+
+@keyframes dropFall {
+  0% { opacity: 0; transform: translateY(-40px) scale(0.6); }
+  30% { opacity: 1; transform: translateY(10px) scale(1.1); }
+  50% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes dropFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes legendaryPulse {
+  0%, 100% { filter: drop-shadow(0 0 18px rgba(255,200,50,.6)); }
+  50% { filter: drop-shadow(0 0 28px rgba(255,200,50,.9)); }
+}
+
+.rpg-drop-item.collected {
+  animation: dropCollect 0.6s ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes dropCollect {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.2) translateY(-100px); }
+}
+
+/* ===== 抽卡系统 ===== */
+.rpg-draw-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1900;
+  background: rgba(10,6,4,.94);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s ease;
+}
+
+.rpg-draw-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.rpg-draw-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent2);
+  font-family: var(--font-display);
+  letter-spacing: .06em;
+  text-align: center;
+}
+
+.rpg-draw-sub {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.rpg-card-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.rpg-card {
+  width: 130px;
+  height: 180px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  background: linear-gradient(135deg, rgba(60,40,20,.9), rgba(30,20,10,.95));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease;
+  position: relative;
+  perspective: 600px;
+}
+
+.rpg-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(0,0,0,.4);
+}
+
+.rpg-card.flipped .rpg-card-inner {
+  transform: rotateY(180deg);
+}
+
+.rpg-card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform .6s cubic-bezier(.34,1.4,.64,1);
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.rpg-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.rpg-card-back {
+  background: linear-gradient(135deg, rgba(80,50,30,.9), rgba(40,25,15,.95));
+  border: 2px solid rgba(201,160,80,.3);
+}
+
+.rpg-card-back::before {
+  content: "?";
+  font-size: 48px;
+  font-weight: 800;
+  color: rgba(201,160,80,.4);
+  font-family: var(--font-display);
+}
+
+.rpg-card-front {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, rgba(40,28,18,.95), rgba(20,14,8,.98));
+  border: 2px solid var(--border);
+}
+
+.rpg-card-front.common { border-color: rgba(200,200,200,.4); }
+.rpg-card-front.rare { border-color: rgba(100,150,255,.5); box-shadow: 0 0 20px rgba(100,150,255,.15); }
+.rpg-card-front.epic { border-color: rgba(180,80,220,.5); box-shadow: 0 0 20px rgba(180,80,220,.15); }
+.rpg-card-front.legendary { border-color: rgba(255,200,50,.5); box-shadow: 0 0 24px rgba(255,200,50,.2); }
+
+.rpg-card-emoji { font-size: 36px; margin-bottom: 8px; }
+.rpg-card-name { font-size: 13px; font-weight: 700; color: var(--text); text-align: center; font-family: var(--font-display); }
+.rpg-card-desc { font-size: 11px; color: var(--accent2); text-align: center; margin-top: 4px; }
+.rpg-card-rarity { font-size: 10px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: .1em; }
+
+.rpg-card.picked {
+  transform: translateY(-12px) scale(1.08);
+}
+
+.rpg-card.not-picked {
+  opacity: .4;
+  transform: scale(.92);
+  pointer-events: none;
+}
+
+/* ===== 背包 HUD ===== */
+.rpg-inventory-btn {
+  position: relative;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  transition: background .15s ease;
+}
+
+.rpg-inventory-btn:hover {
+  background: rgba(212,83,42,.12);
+}
+
+.rpg-inventory-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.rpg-inventory-panel {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  z-index: 1500;
+  width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  background: linear-gradient(180deg, rgba(30,20,12,.97), rgba(15,10,6,.98));
+  box-shadow: var(--shadow);
+  padding: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: all .2s ease;
+}
+
+.rpg-inventory-panel.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.rpg-inventory-panel h4 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--accent2);
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+}
+
+.rpg-inv-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.02);
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.rpg-inv-item .emoji { font-size: 18px; }
+.rpg-inv-item .name { font-weight: 700; color: var(--text); }
+.rpg-inv-item .effect { color: var(--accent2); margin-left: auto; font-size: 11px; }
+
+.rpg-inv-empty {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.rpg-buff-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.rpg-buff-pill {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  border: 1px solid rgba(201,160,80,.35);
+  background: rgba(201,160,80,.1);
+  color: var(--accent2);
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+}
+
+/* ===== 掉落提示 ===== */
+.rpg-loot-toast {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  z-index: 2000;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: 1px solid rgba(201,160,80,.4);
+  background: rgba(40,28,18,.95);
+  color: var(--accent2);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+  opacity: 0;
+  animation: lootToastIn .4s ease forwards, lootToastOut .4s ease 2s forwards;
+  white-space: nowrap;
+}
+
+@keyframes lootToastIn {
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes lootToastOut {
+  to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+.rpg-hidden {
+  display: none !important;
+}
+
+/* ===== 可用道具按钮 ===== */
+.rpg-item-btn {
+  appearance: none;
+  border: 1px solid rgba(201,160,80,.4);
+  background: rgba(201,160,80,.08);
+  color: var(--accent2);
+  padding: 6px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  letter-spacing: .04em;
+  transition: .15s all;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rpg-item-btn:hover {
+  background: rgba(201,160,80,.18);
+  border-color: rgba(201,160,80,.6);
+  transform: translateY(-1px);
+}
+.rpg-item-btn .emoji {
+  font-size: 14px;
+}
+
+/* 选项高亮（经验卷轴提示后） */
+.rpg-choice.hinted {
+  border-color: rgba(201,160,80,.7) !important;
+  background: rgba(201,160,80,.12) !important;
+  box-shadow: 0 0 12px rgba(201,160,80,.2);
+}
+
+/* ===== 终章道具开关 ===== */
+.rpg-item-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.03);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text);
+  transition: .15s all;
+}
+.rpg-item-toggle:hover {
+  background: rgba(212,83,42,.08);
+  border-color: rgba(212,83,42,.3);
+}
+.rpg-item-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* ===== 背包中已使用道具 ===== */
+.rpg-inv-item.used {
+  opacity: .5;
+}
+.rpg-inv-item .used-tag {
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: 6px;
+  font-family: var(--font-display);
+}
+}

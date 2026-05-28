@@ -1,0 +1,7 @@
+node_modules/
+storage/*.db
+storage/*.json
+data/secret.json
+*.log
+.DS_Store
+

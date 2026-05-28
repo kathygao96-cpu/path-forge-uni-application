@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>留学冶炼屋（理工版）</title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 20px;
+      }
+
+      /* ===== 飘浮火星 ===== */
+      .ember {
+        position: absolute;
+        width: 3px; height: 3px;
+        border-radius: 50%;
+        background: var(--accent2);
+        box-shadow: 0 0 6px var(--accent);
+        animation: float-ember 8s ease-in-out infinite;
+        opacity: 0;
+      }
+      @keyframes float-ember {
+        0% { opacity: 0; transform: translateY(0) scale(0); }
+        20% { opacity: .8; }
+        80% { opacity: .4; }
+        100% { opacity: 0; transform: translateY(-120px) scale(1.2); }
+      }
+
+      /* ===== 工坊工作台 ===== */
+      .workbench {
+        width: 100%;
+        max-width: 640px;
+        border-radius: 4px;
+        border: 2px solid var(--border);
+        background: linear-gradient(180deg, rgba(28,20,16,.95) 0%, rgba(20,14,10,.98) 100%);
+        box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.03);
+        overflow: hidden;
+        animation: forge-boot .8s ease-out;
+        position: relative;
+      }
+      .workbench::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 3px;
+        background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), var(--accent), transparent);
+        opacity: .5;
+      }
+      /* 铆钉 */
+      .workbench::after {
+        content: "";
+        position: absolute;
+        bottom: 4px; left: 4px; width: 6px; height: 6px; border-radius: 50%;
+        background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.1);
+      }
+      @keyframes forge-boot {
+        from { opacity: 0; transform: translateY(30px) scale(.96); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      .forge-screen {
+        padding: 40px 32px 32px;
+        text-align: center;
+        position: relative;
+      }
+      @media (max-width: 520px) {
+        .forge-screen { padding: 28px 20px 24px; }
+      }
+
+      .forge-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 2px;
+        border: 1px solid rgba(212,83,42,.3);
+        background: rgba(212,83,42,.08);
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent2);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        font-family: var(--font-display);
+        margin-bottom: 24px;
+      }
+      .forge-badge::before {
+        content: "";
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--accent);
+        animation: blink-ember 1.4s step-end infinite;
+      }
+      @keyframes blink-ember { 50% { opacity: 0; } }
+
+      .forge-title {
+        font-size: clamp(28px, 6vw, 44px);
+        font-weight: 900;
+        line-height: 1.15;
+        letter-spacing: .04em;
+        margin: 0 0 10px;
+        font-family: var(--font-display);
+      }
+      .forge-title .line1 { color: var(--text); }
+      .forge-title .line2 {
+        background: linear-gradient(135deg, #f0c878 0%, #c4783a 50%, #d4532a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .forge-sub {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.7;
+        margin: 0 auto 28px;
+        max-width: 38ch;
+      }
+
+      /* ===== 工序节点 ===== */
+      .ore-strip {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+      }
+      .ore-node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        min-width: 52px;
+      }
+      .ore-node .chunk {
+        width: 36px; height: 36px;
+        border-radius: 2px;
+        border: 2px solid var(--border);
+        background: rgba(255,255,255,.02);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px;
+        transition: all .2s ease;
+      }
+      .ore-node .chunk.locked { opacity: .3; filter: grayscale(.8); }
+      .ore-node .chunk.ready {
+        border-color: rgba(212,83,42,.5);
+        background: rgba(212,83,42,.1);
+        box-shadow: 0 0 16px rgba(212,83,42,.15);
+        animation: ore-glow 2.5s ease-in-out infinite;
+      }
+      @keyframes ore-glow {
+        0%,100% { box-shadow: 0 0 12px rgba(212,83,42,.1); }
+        50%      { box-shadow: 0 0 24px rgba(212,83,42,.25); }
+      }
+      .ore-node .label {
+        font-size: 9px;
+        color: rgba(232,221,208,.3);
+        letter-spacing: .04em;
+        font-family: var(--font-display);
+      }
+      .ore-node .label.active { color: var(--accent2); }
+      .ore-connector {
+        width: 14px; height: 2px;
+        background: var(--border);
+        align-self: flex-start;
+        margin-top: 18px;
+      }
+
+      /* ===== 属性熔炉预览 ===== */
+      .furnace-preview {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        max-width: 300px;
+        margin: 0 auto 28px;
+      }
+      .furnace-bar {
+        padding: 8px 10px;
+        border-radius: 2px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,.02);
+        text-align: center;
+      }
+      .furnace-bar .name {
+        font-size: 9px;
+        color: rgba(232,221,208,.35);
+        letter-spacing: .06em;
+        margin-bottom: 3px;
+        font-family: var(--font-display);
+      }
+      .furnace-bar .heat-wrap {
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255,255,255,.06);
+        overflow: hidden;
+      }
+      .furnace-bar .heat {
+        height: 100%;
+        border-radius: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        width: 0%;
+        animation: heat-fill 1.4s .4s ease-out forwards;
+      }
+      @keyframes heat-fill {
+        from { width: 0%; }
+        to   { width: var(--w); }
+      }
+
+      /* ===== 操作台按钮 ===== */
+      .forge-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 280px;
+        margin: 0 auto;
+      }
+      .forge-btn {
+        appearance: none;
+        border: none;
+        font-family: inherit;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 24px;
+        border-radius: 2px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all .15s ease;
+        position: relative;
+        overflow: hidden;
+        font-family: var(--font-display);
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+      .forge-btn.primary {
+        background: linear-gradient(180deg, rgba(212,83,42,.85), rgba(160,50,20,.7));
+        border: 2px solid rgba(212,83,42,.6);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(212,83,42,.25), inset 0 1px 0 rgba(255,255,255,.15);
+      }
+      .forge-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(212,83,42,.4), inset 0 1px 0 rgba(255,255,255,.2);
+      }
+      .forge-btn.secondary {
+        background: rgba(255,255,255,.02);
+        color: var(--text);
+        border: 2px solid var(--border);
+      }
+      .forge-btn.secondary:hover {
+        background: rgba(212,83,42,.08);
+        border-color: rgba(212,83,42,.3);
+      }
+      .forge-btn .hammer {
+        position: absolute;
+        left: 12px;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity .1s;
+      }
+      .forge-btn:hover .hammer,
+      .forge-btn:focus .hammer {
+        opacity: 1;
+      }
+
+      .forge-footer {
+        margin-top: 20px;
+        font-size: 11px;
+        color: rgba(232,221,208,.2);
+        letter-spacing: .1em;
+        font-family: var(--font-display);
+      }
+      .forge-footer .blink {
+        animation: blink-text 1.4s step-end infinite;
+      }
+      @keyframes blink-text { 50% { opacity: 0; } }
+
+      .forge-tags {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      .forge-tags span {
+        font-size: 10px;
+        padding: 4px 10px;
+        border-radius: 2px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,.02);
+        color: rgba(232,221,208,.3);
+        font-family: var(--font-display);
+        letter-spacing: .04em;
+      }
+
+      /* 邀请码 */
+      .invite-gate { max-width: 280px; margin: 0 auto 24px; }
+      .invite-label { font-size: 11px; color: var(--accent2); font-family: var(--font-display); letter-spacing: .06em; margin-bottom: 8px; }
+      .invite-row { display: flex; gap: 8px; }
+      .invite-row input {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 2px;
+        border: 2px solid var(--border);
+        background: rgba(255,255,255,.04);
+        color: var(--text);
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: .1em;
+      }
+      .invite-row input:focus { outline: none; border-color: rgba(212,83,42,.5); }
+      .invite-hint { margin-top: 8px; font-size: 12px; min-height: 18px; }
+      .invite-hint.ok { color: #7ee0c1; }
+      .invite-hint.err { color: #ff8fa3; }
+      .forge-menu.locked { opacity: .3; pointer-events: none; filter: grayscale(.8); }
+      .forge-menu.locked a { cursor: not-allowed; }
+
+      .workbench-bottom {
+        padding: 12px 20px;
+        background: rgba(0,0,0,.3);
+        border-top: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 10px;
+        color: rgba(232,221,208,.15);
+        letter-spacing: .06em;
+        font-family: var(--font-display);
+        position: relative;
+      }
+      /* 右下角铆钉 */
+      .workbench-bottom::after {
+        content: "";
+        position: absolute;
+        bottom: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%;
+        background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.1);
+      }
+      .anvil-icon {
+        font-size: 14px;
+        opacity: .3;
+      }
+
+      /* 顶部工坊牌匾 */
+      .forge-sign {
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        font-size: 11px;
+        letter-spacing: .12em;
+        color: rgba(232,221,208,.3);
+        text-transform: uppercase;
+        font-family: var(--font-display);
+        z-index: 2;
+        pointer-events: none;
+      }
+      .forge-sign .furnace-status {
+        display: flex; align-items: center; gap: 8px;
+      }
+      .forge-sign .ember-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 10px var(--accent), 0 0 20px rgba(212,83,42,.4);
+        animation: pulse-ember 2s ease-in-out infinite;
+      }
+      @keyframes pulse-ember {
+        0%,100% { opacity: 1; transform: scale(1); }
+        50% { opacity: .5; transform: scale(.85); }
+      }
+
+      .fade-up {
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeUp .6s ease forwards;
+      }
+      .fade-up.d1 { animation-delay: .15s; }
+      .fade-up.d2 { animation-delay: .35s; }
+      .fade-up.d3 { animation-delay: .55s; }
+      .fade-up.d4 { animation-delay: .75s; }
+      .fade-up.d5 { animation-delay: .95s; }
+      @keyframes fadeUp {
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="forge-bg">
+      <div class="ember" style="left:15%;top:70%;animation-delay:0s;animation-duration:7s"></div>
+      <div class="ember" style="left:35%;top:80%;animation-delay:2s;animation-duration:9s"></div>
+      <div class="ember" style="left:55%;top:75%;animation-delay:4s;animation-duration:8s"></div>
+      <div class="ember" style="left:75%;top:85%;animation-delay:1s;animation-duration:10s"></div>
+      <div class="ember" style="left:85%;top:65%;animation-delay:3s;animation-duration:6s"></div>
+    </div>
+
+    <div class="forge-sign">
+      <div class="furnace-status"><span class="ember-dot"></span> 系统就绪</div>
+      <div>PATH FORGE v1.0</div>
+    </div>
+
+    <div class="workbench">
+      <div class="forge-screen">
+        <div class="forge-badge fade-up d1">READY</div>
+
+        <h1 class="forge-title fade-up d2">
+          <div class="line1">留学冶炼屋</div>
+          <div class="line2">理工版</div>
+        </h1>
+
+        <p class="forge-sub fade-up d3">
+          带上你的底牌，进入诊断室<br>
+          5 步诊断，锻造你的留学路径
+        </p>
+
+        <!-- 邀请码输入 -->
+        <div class="invite-gate fade-up d3" id="inviteGate">
+          <div class="invite-label">🔑 请输入邀请码</div>
+          <div class="invite-row">
+            <input type="text" id="inviteInput" placeholder="邀请码" maxlength="20" />
+            <button type="button" id="inviteBtn" class="btn primary" style="padding:10px 16px;font-size:12px">验证</button>
+          </div>
+          <div class="invite-hint" id="inviteHint"></div>
+        </div>
+
+        <!-- 工序节点 -->
+        <div class="ore-strip fade-up d3">
+          <div class="ore-node">
+            <div class="chunk ready">🔥</div>
+            <div class="label active">登记</div>
+          </div>
+          <div class="ore-connector"></div>
+          <div class="ore-node">
+            <div class="chunk locked">🪨</div>
+            <div class="label">学业</div>
+          </div>
+          <div class="ore-connector"></div>
+          <div class="ore-node">
+            <div class="chunk locked">🔨</div>
+            <div class="label">跨度</div>
+          </div>
+          <div class="ore-connector"></div>
+          <div class="ore-node">
+            <div class="chunk locked">⚗️</div>
+            <div class="label">方向</div>
+          </div>
+          <div class="ore-connector"></div>
+          <div class="ore-node">
+            <div class="chunk locked">⚔️</div>
+            <div class="label">执行</div>
+          </div>
+          <div class="ore-connector"></div>
+          <div class="ore-node">
+            <div class="chunk locked">🏺</div>
+            <div class="label">定稿</div>
+          </div>
+        </div>
+
+        <!-- 熔炉预览 -->
+        <div class="furnace-preview fade-up d4">
+          <div class="furnace-bar"><div class="name">学业</div><div class="heat-wrap"><div class="heat" style="--w:60%"></div></div></div>
+          <div class="furnace-bar"><div class="name">经历</div><div class="heat-wrap"><div class="heat" style="--w:45%"></div></div></div>
+          <div class="furnace-bar"><div class="name">执行</div><div class="heat-wrap"><div class="heat" style="--w:55%"></div></div></div>
+          <div class="furnace-bar"><div class="name">方向</div><div class="heat-wrap"><div class="heat" style="--w:70%"></div></div></div>
+          <div class="furnace-bar"><div class="name">匹配</div><div class="heat-wrap"><div class="heat" style="--w:50%"></div></div></div>
+          <div class="furnace-bar"><div class="name">跨界</div><div class="heat-wrap"><div class="heat" style="--w:40%"></div></div></div>
+        </div>
+
+        <!-- 按钮 -->
+        <div class="forge-menu fade-up d4 locked" id="forgeMenu">
+          <a class="forge-btn primary" href="/assessment.html" id="startLink">
+            <span class="hammer">🔨</span>
+            <span>开始锻造</span>
+          </a>
+          <a class="forge-btn secondary" href="/report.html?demo=1">
+            <span class="hammer">🏺</span>
+            <span>查看成品（示例）</span>
+          </a>
+        </div>
+
+        <div class="forge-footer fade-up d5">
+          <span class="blink">🔥</span> STRIKE WHILE THE IRON IS HOT
+        </div>
+
+        <div class="forge-tags fade-up d5">
+          <span>🎓 硕士申请</span>
+          <span>🏢 就业映射</span>
+          <span>⚔️ 5 步诊断</span>
+          <span>📊 路径导师</span>
+        </div>
+      </div>
+
+      <div class="workbench-bottom">
+        <div class="anvil-icon">⛏</div>
+        <div>EST. 2025 · FORGE YOUR PATH</div>
+        <div class="anvil-icon">⛏</div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+    <script>
+      track("landing_view");
+
+      const inviteInput = document.getElementById("inviteInput");
+      const inviteBtn = document.getElementById("inviteBtn");
+      const inviteHint = document.getElementById("inviteHint");
+      const forgeMenu = document.getElementById("forgeMenu");
+      const startLink = document.getElementById("startLink");
+
+      // 检查是否已有验证通过的邀请码
+      const savedCode = localStorage.getItem("inviteCode");
+      if (savedCode) {
+        unlock(savedCode);
+      }
+
+      inviteBtn.addEventListener("click", async () => {
+        const code = inviteInput.value.trim().toUpperCase();
+        if (!code) { inviteHint.textContent = "请输入邀请码"; inviteHint.className = "invite-hint err"; return; }
+        inviteBtn.disabled = true;
+        inviteHint.textContent = "验证中…";
+        inviteHint.className = "invite-hint";
+        try {
+          const r = await fetch("/api/invite/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          });
+          const data = await r.json();
+          if (r.ok && data.valid) {
+            inviteHint.textContent = `✓ 验证通过${data.remaining !== null ? ' · 剩余 ' + data.remaining + ' 次' : ''}`;
+            inviteHint.className = "invite-hint ok";
+            unlock(code);
+          } else {
+            inviteHint.textContent = data.message || "邀请码无效";
+            inviteHint.className = "invite-hint err";
+          }
+        } catch (e) {
+          inviteHint.textContent = "网络错误，请重试";
+          inviteHint.className = "invite-hint err";
+        }
+        inviteBtn.disabled = false;
+      });
+
+      inviteInput.addEventListener("keydown", (e) => { if (e.key === "Enter") inviteBtn.click(); });
+
+      function unlock(code) {
+        localStorage.setItem("inviteCode", code);
+        forgeMenu.classList.remove("locked");
+        startLink.href = "/assessment.html?code=" + encodeURIComponent(code);
+        inviteInput.value = code;
+        inviteInput.disabled = true;
+        inviteBtn.style.display = "none";
+      }
+    </script>
+  </body>
+</html>

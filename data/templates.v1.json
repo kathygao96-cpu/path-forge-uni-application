@@ -1,0 +1,5 @@
+{
+  "summary": "你的画像更偏向「{topMatch}」。优势维度「{strongDim}」，最需要补的是「{weakDim}」。",
+  "title_fallback": "{topMatch} · 需补{weakDim}",
+  "promptInstruction": "本字段由 LLM 在运行时填充，模板仅作 fallback。"
+}

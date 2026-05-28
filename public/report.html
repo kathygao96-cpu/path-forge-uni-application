@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>留学路径图谱 | 留学冶炼屋（理工版）</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/rpg.css" />
+    <style>
+      .heroV2 { margin-top:14px; padding:24px; border-radius:4px; border:2px solid var(--border);
+        background:linear-gradient(135deg, rgba(212,83,42,.18), rgba(201,160,80,.1)); box-shadow: var(--shadow);
+        text-align: center; position: relative; }
+      .heroV2::before, .heroV2::after {
+        content: ""; position: absolute; width: 6px; height: 6px; border-radius: 50%;
+        background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.1);
+        bottom: 4px; }
+      .heroV2::before { left: 4px; }
+      .heroV2::after { right: 4px; }
+      .heroV2 .rank { font-size:52px; line-height:1; }
+      .heroV2 .title { font-size:24px; font-weight:800; margin:6px 0; font-family: var(--font-display); letter-spacing: .04em; }
+      .heroV2 .summary { color:var(--text); opacity:.9; max-width:60ch; }
+      .heroV2 .offer { color:var(--accent2); font-size:14px; margin-top:6px; }
+      .heroV2 .llm-tag { display:inline-block; font-size:11px; padding:3px 8px; border-radius:2px;
+        border:1px solid var(--border); margin-top:8px; background:rgba(255,255,255,.04); color:var(--muted); }
+
+      .matchCard { padding:14px; border-radius:4px; border:2px solid var(--border);
+        background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+        margin-bottom:10px; position: relative; }
+      .matchCard::before, .matchCard::after {
+        content: ""; position: absolute; width: 5px; height: 5px; border-radius: 50%;
+        background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.5);
+        top: 3px; }
+      .matchCard::before { left: 3px; }
+      .matchCard::after { right: 3px; }
+      .matchHead { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:6px; }
+      .matchHead .rate { font-size:20px; }
+      .matchHead h3 { margin:0; font-size:16px; flex:1; min-width:0; font-family: var(--font-display); letter-spacing: .02em; }
+      .matchHead .fit { font-size:12px; color:var(--muted); }
+      .matchWhy { font-size:13px; line-height:1.55; color:rgba(232,221,208,.85); margin:6px 0 10px; }
+      .companyRow { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+      .companyItem { padding:8px 10px; border-radius:2px; border:1px solid var(--border); background:rgba(255,255,255,.02); font-size:12.5px; }
+      .companyItem .cname { font-weight:700; }
+      .companyItem .ctag { color:var(--accent2); font-size:11px; margin-left:6px; padding:2px 6px; border-radius:2px; background:rgba(201,160,80,.1); border:1px solid rgba(201,160,80,.25); }
+      .companyItem .csal { color:var(--muted); }
+
+      .truthBox { padding:14px 16px; border-radius:4px; border:1px solid rgba(201,160,80,.35);
+        background:linear-gradient(180deg, rgba(201,160,80,.1), rgba(201,160,80,.03));
+        margin-bottom:10px; position: relative; }
+      .truthBox::before, .truthBox::after {
+        content: ""; position: absolute; width: 5px; height: 5px; border-radius: 50%;
+        background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.5);
+        top: 3px; }
+      .truthBox::before { left: 3px; }
+      .truthBox::after { right: 3px; }
+      .truthBox .text { font-weight:700; font-size:14px; color:#fff; margin-bottom:4px; }
+      .truthBox .why { font-size:12px; color:var(--accent2); }
+
+      .timelineCard { padding:12px 14px; border-radius:4px; border:1px solid var(--border);
+        background:rgba(255,255,255,.02); margin-bottom:8px; position:relative; padding-left:80px; }
+      .timelineCard .phase { position:absolute; left:14px; top:14px; font-size:11px; font-weight:800; color:var(--accent2); width:56px; font-family: var(--font-display); }
+      .timelineCard .milestone { font-weight:700; font-size:14px; margin-bottom:6px; color:var(--text); }
+      .timelineCard ul { margin:0; padding-left:18px; font-size:12.5px; color:rgba(232,221,208,.85); }
+
+      .scnCard { padding:12px 14px; border-radius:4px; border:1px solid rgba(168,50,50,.3);
+        background:linear-gradient(180deg, rgba(168,50,50,.08), rgba(168,50,50,.02));
+        margin-bottom:8px; }
+      .scnCard .stitle { font-size:13px; font-weight:700; color:#ff8fa3; margin-bottom:4px; font-family: var(--font-display); }
+      .scnCard .schoice { font-size:11px; color:var(--muted); margin-bottom:6px; }
+      .scnCard .scomment { font-size:13px; line-height:1.55; color:rgba(232,221,208,.9); }
+
+      .ratingBadge { font-size:11px; padding:2px 8px; border-radius:2px; border:1px solid var(--border); font-family: var(--font-display); }
+      .ratingBadge.green { color:#7ee0c1; border-color:rgba(46,160,100,.45); background:rgba(46,160,100,.1); }
+      .ratingBadge.yellow { color:var(--accent2); border-color:rgba(201,160,80,.4); background:rgba(201,160,80,.1); }
+      .ratingBadge.red { color:#ff8fa3; border-color:rgba(168,50,50,.4); background:rgba(168,50,50,.1); }
+
+      /* 炼金术士类型卡片 */
+      .typeCard {
+        padding: 20px;
+        border-radius: 4px;
+        border: 2px solid rgba(201,160,80,.35);
+        background: linear-gradient(180deg, rgba(201,160,80,.10), rgba(201,160,80,.02));
+        position: relative;
+      }
+      .typeCard::before, .typeCard::after {
+        content: "";
+        position: absolute;
+        width: 6px; height: 6px; border-radius: 50%;
+        background: linear-gradient(135deg, #8a7a6a, #4a3a2a);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.5);
+        top: 4px;
+      }
+      .typeCard::before { left: 4px; }
+      .typeCard::after { right: 4px; }
+      .typeTagline {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--accent2);
+        font-family: var(--font-display);
+        letter-spacing: .04em;
+        margin-bottom: 10px;
+      }
+      .typeDesc {
+        font-size: 14px;
+        line-height: 1.65;
+        color: rgba(232,221,208,.9);
+        margin-bottom: 14px;
+      }
+      .typeGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .typeBlock {
+        padding: 12px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,.03);
+      }
+      .typeBlock.good {
+        border-color: rgba(46,140,80,.35);
+        background: rgba(46,140,80,.06);
+      }
+      .typeBlock.warn {
+        border-color: rgba(168,50,50,.35);
+        background: rgba(168,50,50,.06);
+      }
+      .typeBlockTitle {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        font-family: var(--font-display);
+        margin-bottom: 6px;
+      }
+      .typeBlock.good .typeBlockTitle { color: #7ee0c1; }
+      .typeBlock.warn .typeBlockTitle { color: #ff8fa3; }
+      .typeBlockText {
+        font-size: 13px;
+        line-height: 1.5;
+        color: rgba(232,221,208,.85);
+      }
+      .typeFitPath {
+        padding: 10px 14px;
+        border-radius: 2px;
+        border: 1px solid rgba(201,160,80,.3);
+        background: rgba(201,160,80,.06);
+        font-size: 13px;
+        line-height: 1.55;
+        color: rgba(232,221,208,.9);
+      }
+      .typeFitLabel {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: var(--font-display);
+        letter-spacing: .06em;
+        color: var(--accent2);
+        margin-right: 8px;
+      }
+      @media (max-width: 640px) {
+        .typeGrid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body class="report-rpg">
+    <div class="container">
+      <div class="nav">
+        <div class="brand">
+          <span style="width:10px;height:10px;border-radius:999px;background:var(--accent2)"></span>
+          <span>留学冶炼屋（理工版）路径图谱</span>
+          <span class="badge" id="asmId">加载中…</span>
+        </div>
+        <div class="row noPrint" style="margin:0">
+          <button class="btn ghost" id="copyBtn">复制链接</button>
+          <button class="btn" id="printBtn">打印 / PDF</button>
+          <a class="btn" href="/">回诊断室</a>
+        </div>
+      </div>
+
+      <div class="heroV2" id="heroV2">
+        <div class="rank" id="heroRank">?</div>
+        <div class="title" id="heroTitle">留学路径图谱</div>
+        <div class="summary" id="heroSummary">—</div>
+        <div class="offer" id="heroOffer">成功概率 —%</div>
+        <div class="llm-tag" id="llmTag"></div>
+      </div>
+
+      <!-- 炼金术士类型卡片 -->
+      <div id="typeCardPanel" style="margin-top:14px;display:none"></div>
+
+      <div class="kpi" id="dimsPills" style="margin-top:12px"></div>
+
+      <!-- 道具效果展示 -->
+      <div id="itemEffectsPanel" style="margin-top:12px;display:none"></div>
+
+      <!-- 裂变邀请码 -->
+      <div class="panel" id="referralPanel" style="margin-top:14px;display:none">
+        <h2>🔑 邀请好友</h2>
+        <p class="muted" style="margin-top:8px">生成你的专属邀请码，分享给需要留学诊断的朋友。</p>
+        <div id="referralContent" style="margin-top:12px">
+          <button type="button" class="btn primary" id="genInviteBtn">生成我的邀请码</button>
+        </div>
+      </div>
+
+      <div class="reportGrid" style="margin-top:14px">
+        <div class="panel">
+          <h2>6 维底牌属性</h2>
+          <p class="muted" style="margin-top:8px">由 6 把标尺测量。点位越靠外，你的该项能力越强。</p>
+          <canvas id="radar" width="560" height="460" style="width:100%;max-width:560px;margin-top:10px"></canvas>
+          <div id="dimLegend" style="display:grid;gap:6px;margin-top:14px;font-size:12px"></div>
+        </div>
+        <div class="panel">
+          <h2>导师的真话</h2>
+          <div id="truthList" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h2>Top3 适配路径（行业 × 岗位 × 公司类型）</h2>
+        <p class="muted" style="margin-top:8px">由路径导师基于你的底牌画像 + 案例库 + 联网数据整合而成。</p>
+        <div id="matchList" style="margin-top:12px"></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h2>申请时间线</h2>
+        <p class="muted" style="margin-top:8px">按你的申请季 + 当前阶段反推每一步该落在哪里。</p>
+        <div id="timelineList" style="margin-top:12px"></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h2>推荐项目（覆盖冲刺/匹配/保底）</h2>
+        <p class="muted" style="margin-top:8px">学校档位说明：<strong style="color:#fff">梦校（S+）</strong> 顶级选择 · <strong style="color:#fff">顶尖（S）</strong> 公认好项目 · <strong style="color:#fff">优质（A）</strong> 靠谱选择 · <strong style="color:#fff">友好（B）</strong> 温度适中。</p>
+        <div id="programList" class="list" style="margin-top:10px"></div>
+      </div>
+
+      <div class="panel" id="scnPanel" style="margin-top:14px;display:none">
+        <h2>情境选择回放</h2>
+        <p class="muted" style="margin-top:8px">你在方向定型环节中的选择 + 路径导师点评。</p>
+        <div id="scnList" style="margin-top:12px"></div>
+      </div>
+
+      <div class="footer">图谱由 6 维诊断评分 + 案例库 + 联网搜索 + 路径导师生成。可在后台调整题库与权重。</div>
+    </div>
+
+    <script src="/app.js"></script>
+    <script>
+      function getParam(name) {
+        return new URL(location.href).searchParams.get(name);
+      }
+      function rateBadge(r) {
+        const cls = r === "🟢" ? "green" : r === "🔴" ? "red" : "yellow";
+        return `<span class="ratingBadge ${cls}">${r}</span>`;
+      }
+      function pillCls(s) { return s >= 75 ? "pill good" : s <= 45 ? "pill warn" : "pill"; }
+
+      const TIER_LABEL = { "S+": "梦校", "S": "顶尖", "A": "优质", "B": "友好", "C": "保底" };
+      const TIER_COLOR = { "S+": "#ff8fa3", "S": "#f0c878", "A": "#7ee0c1", "B": "#b8d1ff", "C": "rgba(255,255,255,.6)" };
+
+      function tierBadge(tier) {
+        if (!tier) return "";
+        const label = TIER_LABEL[tier] || tier;
+        const color = TIER_COLOR[tier] || "rgba(255,255,255,.6)";
+        return `<span class="pill" style="border-color:${color};color:${color}">${label} · ${tier}</span>`;
+      }
+
+      function render(assessment) {
+        const r = assessment.report || {};
+        qs("#asmId").textContent = assessment.id || "DEMO";
+
+        const offer = r.offerProbability ?? 0;
+        const type = r.alchemistType || {};
+
+        // 炼金术士类型展示
+        qs("#heroRank").innerHTML = `<span style="font-size:18px;letter-spacing:.15em;color:var(--accent2);font-family:var(--font-display)">${escapeHtml(type.code || "????")}</span>`;
+        qs("#heroTitle").textContent = type.name || r.title || "—";
+        qs("#heroSummary").textContent = r.summary || "";
+        qs("#heroOffer").textContent = `成功概率 ${offer}%`;
+        qs("#llmTag").textContent = r.llmGenerated ? "✦ 由路径导师 + 联网数据整合" : (r.llmError ? "降级模式（离线）· " + r.llmError : "本地诊断");
+
+        // 类型卡片
+        const typePanel = qs("#typeCardPanel");
+        if (typePanel && type.code) {
+          typePanel.style.display = "";
+          typePanel.innerHTML = `
+            <div class="typeCard">
+              <div class="typeTagline">${escapeHtml(type.tagline || "")}</div>
+              <div class="typeDesc">${escapeHtml(type.desc || "")}</div>
+              <div class="typeGrid">
+                <div class="typeBlock good">
+                  <div class="typeBlockTitle">优势</div>
+                  <div class="typeBlockText">${escapeHtml(type.strength || "")}</div>
+                </div>
+                <div class="typeBlock warn">
+                  <div class="typeBlockTitle">盲区</div>
+                  <div class="typeBlockText">${escapeHtml(type.blindspot || "")}</div>
+                </div>
+              </div>
+              <div class="typeFitPath">
+                <span class="typeFitLabel">适配路径</span>
+                ${escapeHtml(type.fitPath || "")}
+              </div>
+            </div>
+          `;
+        } else if (typePanel) {
+          typePanel.style.display = "none";
+        }
+
+        // 道具效果展示
+        const itemPanel = qs("#itemEffectsPanel");
+        const items = r.itemEffects || [];
+        if (itemPanel && items.length > 0) {
+          itemPanel.style.display = "";
+          let html = `<div style="display:flex;gap:8px;flex-wrap:wrap;">`;
+          for (const it of items) {
+            if (it.type === "offer") {
+              html += `<span class="pill good">🍀 幸运符生效 · 录取概率 +${it.bonus}%</span>`;
+            } else if (it.type === "dim") {
+              const dimNames = { academic: "学业", gap: "跨界", experience: "经历", clarity: "方向", execution: "执行", fit: "匹配" };
+              html += `<span class="pill">💎 属性石生效 · ${dimNames[it.dim] || it.dim} +${it.bonus}</span>`;
+            } else if (it.type === "note") {
+              html += `<span class="pill">📝 导师便签生效 · 额外洞察已注入</span>`;
+            }
+          }
+          html += "</div>";
+          itemPanel.innerHTML = html;
+        } else if (itemPanel) {
+          itemPanel.style.display = "none";
+        }
+
+        const dims = r.dims || [];
+        const pills = qs("#dimsPills");
+        clearAll(pills);
+        for (const d of dims) {
+          const el = document.createElement("span");
+          el.className = pillCls(d.score);
+          el.textContent = `${d.name} ${d.score}`;
+          pills.appendChild(el);
+        }
+        drawRadar(qs("#radar"), dims.map((d) => ({ name: d.radarName || d.shortName || d.name, score: d.score })));
+        const legend = qs("#dimLegend");
+        if (legend) {
+          clearAll(legend);
+          for (const d of dims) {
+            const row = document.createElement("div");
+            row.style.cssText = "display:flex;gap:8px;color:rgba(232,221,208,.78)";
+            row.innerHTML = `<span style="min-width:84px;color:var(--accent2);font-weight:700">${escapeHtml(d.radarName || d.name)}</span><span style="flex:1">${escapeHtml(d.desc || "")}</span><span style="font-weight:800;color:var(--text);min-width:36px;text-align:right">${d.score}</span>`;
+            legend.appendChild(row);
+          }
+        }
+
+        const matches = r.matches || [];
+        const matchEl = qs("#matchList");
+        clearAll(matchEl);
+        for (const m of matches) {
+          const card = document.createElement("div");
+          card.className = "matchCard";
+          const companiesHtml = (m.companies || []).map(c =>
+            `<div class="companyItem"><span class="cname">${escapeHtml(c.name)}</span>${c.tag ? `<span class="ctag">${escapeHtml(c.tag)}</span>` : ""}<span class="csal"> · ${escapeHtml(c.salary || "")}${c.location ? " · " + escapeHtml(c.location) : ""}</span></div>`
+          ).join("");
+          card.innerHTML = `
+            <div class="matchHead">
+              ${rateBadge(m.rating || "🟡")}
+              <h3>${escapeHtml(industryName(m.industryId))} × ${escapeHtml(roleName(m.roleId))}</h3>
+              <span class="fit">匹配度 ${m.fitScore ?? "-"}/100</span>
+            </div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">${escapeHtml(companyTypeName(m.companyTypeId))} · ${escapeHtml(m.salaryBand || "")}</div>
+            <div class="matchWhy">${escapeHtml(m.why || "")}</div>
+            <div class="companyRow">${companiesHtml}</div>`;
+          matchEl.appendChild(card);
+        }
+
+        const truthEl = qs("#truthList");
+        clearAll(truthEl);
+        for (const t of (r.truths || [])) {
+          const box = document.createElement("div");
+          box.className = "truthBox";
+          box.innerHTML = `<div class="text">${escapeHtml(t.text || "")}</div><div class="why">${escapeHtml(t.why || "")}</div>`;
+          truthEl.appendChild(box);
+        }
+
+        const timelineEl = qs("#timelineList");
+        clearAll(timelineEl);
+        for (const p of (r.timeline || [])) {
+          const card = document.createElement("div");
+          card.className = "timelineCard";
+          const tasks = (p.tasks || []).map(t => `<li>${escapeHtml(t)}</li>`).join("");
+          card.innerHTML = `<div class="phase">${escapeHtml(p.phase || "")}</div>
+            <div class="milestone">🎯 ${escapeHtml(p.milestone || "")}</div>
+            <ul>${tasks}</ul>`;
+          timelineEl.appendChild(card);
+        }
+
+        const programEl = qs("#programList");
+        clearAll(programEl);
+        for (const p of (r.programs || [])) {
+          const el = document.createElement("div");
+          el.className = "item";
+          const riskCls = p.risk === "冲刺" ? "pill warn" : p.risk === "保底" ? "pill good" : "pill";
+          el.innerHTML = `<h4>${escapeHtml(p.school || "")} · ${escapeHtml(p.name || "")}</h4>
+            <div class="sub">${escapeHtml(p.country || "")} · ${escapeHtml(p.track || "")} · <span class="${riskCls}">${escapeHtml(p.risk || "-")}</span> <span class="sub">综合匹配 ${Math.round((p.readiness ?? 0) * 100)}% / 学术达标 ${Math.round((p.academicReadiness ?? p.readiness ?? 0) * 100)}%</span> ${tierBadge(p.tier)}</div>
+            ${p.fitTag ? `<div class="sub" style="margin-top:6px">${escapeHtml(p.fitTag)}</div>` : ""}
+            ${p.link ? `<div class="sub" style="margin-top:6px"><a href="${escapeHtml(p.link)}" target="_blank" rel="noreferrer">官网</a></div>` : ""}`;
+          programEl.appendChild(el);
+        }
+
+        const scn = r.scenarioCommentary || [];
+        if (scn.length > 0) {
+          qs("#scnPanel").style.display = "";
+          const scnList = qs("#scnList");
+          clearAll(scnList);
+          for (const s of scn) {
+            const meta = (s.scenarioId && window._scenariosById?.[s.scenarioId]) || {};
+            const card = document.createElement("div");
+            card.className = "scnCard";
+            card.innerHTML = `<div class="stitle">${escapeHtml(meta.title || s.scenarioId || "")}</div>
+              <div class="schoice">你的选择：${escapeHtml(s.userChoice || "")}</div>
+              <div class="scomment">${escapeHtml(s.comment || "")}</div>`;
+            scnList.appendChild(card);
+          }
+        }
+      }
+
+      function clearAll(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+
+      let _cfg = null;
+      function industryName(id) {
+        const i = (_cfg?.industries || []).find(x => x.id === id);
+        return i ? (i.icon ? i.icon + " " : "") + i.name : id || "-";
+      }
+      function roleName(id) {
+        const r = (_cfg?.roles || []).find(x => x.id === id);
+        return r ? (r.icon ? r.icon + " " : "") + r.name : id || "-";
+      }
+      function companyTypeName(id) {
+        const c = (_cfg?.companyTypes || []).find(x => x.id === id);
+        return c ? (c.icon ? c.icon + " " : "") + c.shortName : id || "-";
+      }
+
+      function demoReport() {
+        return {
+          id: "DEMO",
+          report: {
+            title: "CS底牌转算法路径 · 硅谷方向已清晰",
+            summary: "你的底牌最接近「互联网算法 × 研发工程师 × 民营科技」的路径方向。最强的是「经历质量」，最需要补强的是「执行韧性」。",
+            alchemistType: {
+              code: "PERF",
+              name: "六边形赌狗",
+              tagline: "什么都沾点，什么都不精，申请季全靠赌",
+              desc: "你像一只开屏的孔雀，看起来五颜六色很唬人，但仔细一看每根羽毛都有点秃。GPA还行，实习也有，方向也大致知道，执行也还过得去——但没有一个是杀手锏。",
+              strength: "容错率极高，哪个方向都能蹭一蹭，简历不会空",
+              blindspot: "缺乏一锤定音的亮点，容易被专精型选手卷死",
+              fitPath: "必须找到一个能串起你杂七杂八经历的叙事主线，否则就是一盘散沙"
+            },
+            offerProbability: 78,
+            llmGenerated: false,
+            llmError: "demo_mode",
+            dims: [
+              { id: "academic", name: "学业底牌", shortName: "学业", radarName: "学业", desc: "院校层级 + GPA + 排名 + 核心课", score: 72 },
+              { id: "gap", name: "跨界难度", shortName: "跨界", radarName: "跨界", desc: "本科 vs 目标方向的距离与补强动作", score: 80 },
+              { id: "experience", name: "经历质量", shortName: "经历", radarName: "经历", desc: "科研 + 实习 + 项目的相关性与产出", score: 85 },
+              { id: "clarity", name: "方向清晰", shortName: "方向", radarName: "方向", desc: "行业 × 岗位 × 城市 × 公司类型 偏好", score: 70 },
+              { id: "execution", name: "执行韧性", shortName: "执行", radarName: "执行", desc: "申请季 + 简历 + 内推渠道", score: 55 },
+              { id: "fit", name: "性格匹配", shortName: "匹配", radarName: "匹配", desc: "性格 + 生活方式 与岗位的契合度", score: 65 },
+            ],
+            strongDim: { id: "experience", name: "经历质量" },
+            weakDim: { id: "execution", name: "执行韧性" },
+            matches: [
+              {
+                industryId: "semiconductor", roleId: "pie_yield", companyTypeId: "private_manufacturing",
+                fitScore: 86, rating: "🟢",
+                why: "半导体 + PIE/良率 是材料人最合适的应届岗位之一：跨制程接触整个 flow，不需要倒班。你的纯度含量和温差耐受都已达标。",
+                companies: [
+                  { name: "中芯国际", tag: "黄埔军校", salary: "28-35W", location: "上海/北京" },
+                  { name: "华虹半导体", tag: "黄埔军校", salary: "25-32W", location: "上海/成都" },
+                ],
+                salaryBand: "税前 28-35W"
+              },
+            ],
+            truths: [
+              { text: "把 GPA 改成百分制 + 标注排名", why: "百分制更直观，排名是硬通货" },
+              { text: "做一份中英双语简历", why: "外企/海外项目第一眼就要看到 well-prepared" },
+              { text: "建立内推渠道清单", why: "投半导体优先找人推荐推荐推荐" },
+            ],
+            timeline: [
+              { phase: "现在 - 2026/08", tasks: ["补半导体物理课程", "找一段相关方向实习"], milestone: "暑期实习到岗" },
+              { phase: "2026/09 - 2026/12", tasks: ["申请文书+推荐人", "雅思冲 7.0"], milestone: "递交核心校申请" },
+              { phase: "2027/09", tasks: ["入学准备"], milestone: "27 Fall 入学" },
+            ],
+            programs: [
+              { id: "sg_nus_mse", country: "SG", school: "NUS", name: "MSc Materials Science and Engineering", track: "Materials", tier: "S", risk: "冲刺", readiness: 0.7, academicReadiness: 0.5, fitTag: "新国立材料全球顶尖，半导体认可度高" },
+              { id: "hk_polyu_mse", country: "HK", school: "PolyU", name: "MSc Materials & Manufacturing", track: "Materials/ME", tier: "B", risk: "保底", readiness: 0.85, academicReadiness: 1.0 },
+            ],
+            scenarioCommentary: [],
+          },
+        };
+      }
+
+      qs("#printBtn").onclick = () => {
+        track("report_print_click");
+        window.print();
+      };
+      qs("#copyBtn").onclick = async () => {
+        const url = location.href;
+        try { await navigator.clipboard.writeText(url); alert("已复制图谱链接"); }
+        catch { prompt("复制下面的链接：", url); }
+        track("report_copy_link");
+      };
+
+      /* ---- 裂变邀请码逻辑 ---- */
+      async function setupReferral(assessment) {
+        const panel = qs("#referralPanel");
+        const content = qs("#referralContent");
+        if (!panel || !content) return;
+        // 仅对真实评估展示（非 demo）
+        if (!assessment.id || assessment.id === "DEMO") {
+          panel.style.display = "none";
+          return;
+        }
+        panel.style.display = "";
+        // 先检查是否已有邀请码
+        const leadId = assessment.leadId;
+        if (!leadId) {
+          content.innerHTML = `<p class="muted">数据暂不可用，请稍后再试。</p>`;
+          return;
+        }
+        // 尝试恢复已生成的邀请码
+        const cached = localStorage.getItem("refCode_" + leadId);
+        if (cached) {
+          showReferralCode(content, cached);
+          return;
+        }
+        // 绑定生成按钮
+        const btn = qs("#genInviteBtn");
+        if (btn) {
+          btn.onclick = async () => {
+            btn.disabled = true;
+            btn.textContent = "生成中…";
+            try {
+              const res = await api("/api/invite/generate", { method: "POST", body: JSON.stringify({ leadId }) });
+              if (res.code) {
+                localStorage.setItem("refCode_" + leadId, res.code);
+                showReferralCode(content, res.code);
+                track("referral_code_generated", { leadId, code: res.code });
+              } else {
+                throw new Error("no code returned");
+              }
+            } catch (e) {
+              btn.disabled = false;
+              btn.textContent = "生成我的邀请码";
+              alert("生成失败：" + (e.message || "请稍后重试"));
+            }
+          };
+        }
+      }
+
+      function showReferralCode(container, code) {
+        container.innerHTML = `
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <div class="pill" style="font-size:16px;font-weight:700;letter-spacing:.06em;font-family:var(--font-display);padding:8px 16px;border-color:var(--accent2);color:var(--accent2)">${escapeHtml(code)}</div>
+            <button type="button" class="btn ghost" id="copyRefCodeBtn">复制</button>
+          </div>
+          <p class="muted" style="margin-top:8px;font-size:12px">把邀请码发给朋友，对方在首页输入即可解锁诊断。</p>
+        `;
+        const copyBtn = qs("#copyRefCodeBtn");
+        if (copyBtn) {
+          copyBtn.onclick = async () => {
+            try {
+              await navigator.clipboard.writeText(code);
+              copyBtn.textContent = "已复制";
+              setTimeout(() => { copyBtn.textContent = "复制"; }, 2000);
+            } catch {
+              prompt("复制邀请码：", code);
+            }
+          };
+        }
+      }
+
+      (async function init() {
+        try {
+          _cfg = await api("/api/config");
+          const qb = await api("/api/questionBank");
+          window._scenariosById = qb.scenariosById || {};
+        } catch {}
+
+        const id = getParam("id");
+        const demo = getParam("demo");
+        if (demo === "1" || !id) {
+          render(demoReport());
+          track("report_view", { demo: true });
+          return;
+        }
+        try {
+          const asm = await api(`/api/assessments/${encodeURIComponent(id)}`);
+          render(asm);
+          setupReferral(asm);
+          track("report_view", { assessmentId: id, llmGenerated: asm.report?.llmGenerated });
+        } catch (e) {
+          render(demoReport());
+          qs("#heroSummary").textContent = "加载失败，展示示例：" + e.message;
+        }
+      })();
+    </script>
+  </body>
+</html>

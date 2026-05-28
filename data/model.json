@@ -1,0 +1,55 @@
+{
+  "id": "forge-v1",
+  "name": "留学冶炼屋 6 维诊断模型 v1",
+  "version": "v1",
+  "dimensions": [
+    {
+      "id": "academic",
+      "name": "学业底牌",
+      "shortName": "学业",
+      "radarName": "学业",
+      "maxPoints": 140,
+      "desc": "院校层级 + GPA + 专业排名 + 核心课垂直度——你的先天学业基础"
+    },
+    {
+      "id": "gap",
+      "name": "跨界难度",
+      "shortName": "跨界",
+      "radarName": "跨界",
+      "maxPoints": 130,
+      "desc": "本科与目标方向的距离，以及补强动作的完成度。高分=方向匹配好或已认真补课"
+    },
+    {
+      "id": "experience",
+      "name": "经历质量",
+      "shortName": "经历",
+      "radarName": "经历",
+      "maxPoints": 180,
+      "desc": "科研+实习+项目的相关性、可量化产出、署名顺序、故事包装得是否漂亮"
+    },
+    {
+      "id": "clarity",
+      "name": "方向清晰",
+      "shortName": "方向",
+      "radarName": "方向",
+      "maxPoints": 100,
+      "desc": "行业 × 岗位族 × 城市 × 公司类型 四元偏好的清晰度——你的目标指向哪里"
+    },
+    {
+      "id": "execution",
+      "name": "执行韧性",
+      "shortName": "执行",
+      "radarName": "执行",
+      "maxPoints": 110,
+      "desc": "申请季时间线意识 + 简历/英文材料状态 + 内推渠道认知——你的推进力"
+    },
+    {
+      "id": "fit",
+      "name": "性格匹配",
+      "shortName": "匹配",
+      "radarName": "匹配",
+      "maxPoints": 90,
+      "desc": "性格 + 生活方式偏好（倒班/驻厂/WLB/钱vs稳定/户口/出差）与目标路径的契合度"
+    }
+  ]
+}

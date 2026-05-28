@@ -1,0 +1,77 @@
+{
+  "id": "wayto-lifestyle-v1",
+  "version": "v1",
+  "axes": [
+    {
+      "id": "shift_work",
+      "name": "倒班/夜班接受度",
+      "question": "你愿意接受倒班或夜班吗？",
+      "options": [
+        { "id": "no", "label": "完全不能接受", "fitTags": ["写字楼", "白领"] },
+        { "id": "short", "label": "短期可以，长期不行", "fitTags": ["项目制"] },
+        { "id": "ok", "label": "可以接受，看薪资", "fitTags": ["倒班可能"] },
+        { "id": "ok_high", "label": "只要钱给够都可以", "fitTags": ["倒班可能", "无尘室"] }
+      ]
+    },
+    {
+      "id": "onsite",
+      "name": "驻厂/无尘室接受度",
+      "question": "驻厂工作或长期无尘室能接受吗？",
+      "options": [
+        { "id": "no", "label": "不接受", "fitTags": ["写字楼"] },
+        { "id": "office_first", "label": "尽量办公室", "fitTags": ["写字楼+实验场"] },
+        { "id": "mixed_ok", "label": "实验室/无尘室+办公室混合可以", "fitTags": ["实验室", "无尘室"] },
+        { "id": "ok", "label": "完全接受", "fitTags": ["驻厂", "无尘室", "实验室"] }
+      ]
+    },
+    {
+      "id": "travel",
+      "name": "出差比例",
+      "question": "你能接受多大比例的出差？",
+      "options": [
+        { "id": "no", "label": "不接受", "fitTags": ["写字楼"] },
+        { "id": "low", "label": "<10%", "fitTags": ["写字楼"] },
+        { "id": "mid", "label": "10-30%", "fitTags": ["客户对接"] },
+        { "id": "high", "label": ">30%（包含驻外）", "fitTags": ["出差多", "客户现场"] }
+      ]
+    },
+    {
+      "id": "priority",
+      "name": "薪资 vs WLB vs 稳定 vs 户口",
+      "question": "选 offer 时你的首要排序是？",
+      "type": "rank",
+      "items": [
+        { "id": "salary", "label": "💰 薪资最高" },
+        { "id": "wlb", "label": "🧘 WLB（不加班）" },
+        { "id": "stability", "label": "🛡️ 稳定" },
+        { "id": "hukou", "label": "📋 户口" },
+        { "id": "platform", "label": "🏢 平台/履历镀金" },
+        { "id": "growth", "label": "🚀 成长速度" }
+      ]
+    },
+    {
+      "id": "personality",
+      "name": "性格",
+      "question": "更接近哪种？",
+      "options": [
+        { "id": "introvert_detail", "label": "内向 + 专注细节", "fitRoles": ["rd_engineer", "ic_design_verify", "test_product", "materials_rd", "reliability_engineer", "embedded_sw"] },
+        { "id": "introvert_logic", "label": "内向 + 强逻辑", "fitRoles": ["algorithm_ml", "software_engineer", "ic_design_verify", "comm_algo"] },
+        { "id": "extrovert_comm", "label": "外向 + 沟通强", "fitRoles": ["fae", "sales_engineer", "product_manager", "project_manager", "ae_app"] },
+        { "id": "balanced", "label": "两者都可以切换", "fitRoles": ["ae_app", "tse_test_system", "embedded_hw", "structural_engineer"] }
+      ]
+    },
+    {
+      "id": "city_constraint",
+      "name": "城市硬约束",
+      "question": "你有必须留/必须避开的城市吗？",
+      "type": "multi",
+      "options": [
+        { "id": "must_first_tier", "label": "只考虑北上深广" },
+        { "id": "exclude_remote", "label": "不去郊区/远城" },
+        { "id": "exclude_north", "label": "不去北方/不去南方" },
+        { "id": "hometown", "label": "回家乡（具体填写）" },
+        { "id": "open", "label": "都能接受" }
+      ]
+    }
+  ]
+}

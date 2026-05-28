@@ -1,0 +1,481 @@
+[
+  {
+    "name": "TSMC 台积电",
+    "industry": "semiconductor",
+    "subSegment": "Fab",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "天花板",
+    "salary": "本部新台币 200万+/年（折 RMB 45W+），南京/上海派遣有差",
+    "locations": ["新竹", "南京", "上海"],
+    "note": "应届岗位竞争极其激烈"
+  },
+  {
+    "name": "Samsung 三星半导体",
+    "industry": "semiconductor",
+    "subSegment": "IDM",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "天花板",
+    "salary": "30-45W",
+    "locations": ["韩国", "西安"],
+    "note": "存储/系统 LSI"
+  },
+  {
+    "name": "Intel 英特尔",
+    "industry": "semiconductor",
+    "subSegment": "IDM",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "外企标杆",
+    "salary": "25-40W",
+    "locations": ["上海", "大连"],
+    "note": "通信软件/封测"
+  },
+  {
+    "name": "SK 海力士",
+    "industry": "semiconductor",
+    "subSegment": "Fab",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "天花板",
+    "salary": "25-40W",
+    "locations": ["无锡"]
+  },
+  {
+    "name": "中芯国际",
+    "industry": "semiconductor",
+    "subSegment": "Fab",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "黄埔军校",
+    "salary": "28-35W",
+    "locations": ["上海", "北京", "天津"],
+    "note": "国内 fab 优选"
+  },
+  {
+    "name": "京方/华虹半导体",
+    "industry": "semiconductor",
+    "subSegment": "Fab",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "黄埔军校",
+    "salary": "25-32W",
+    "locations": ["上海", "无锡", "成都"]
+  },
+  {
+    "name": "长江存储",
+    "industry": "semiconductor",
+    "subSegment": "Fab",
+    "companyType": "private_manufacturing",
+    "rating": "🟡",
+    "tag": "高薪牛马",
+    "salary": "30-40W",
+    "locations": ["武汉"]
+  },
+  {
+    "name": "长鑫存储",
+    "industry": "semiconductor",
+    "subSegment": "Fab",
+    "companyType": "private_manufacturing",
+    "rating": "🟡",
+    "tag": "高薪牛马",
+    "salary": "30-40W",
+    "locations": ["合肥"]
+  },
+  {
+    "name": "华为海思",
+    "industry": "semiconductor",
+    "subSegment": "Fabless",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "国内 Fabless 顶级",
+    "salary": "25-40W",
+    "locations": ["深圳", "上海"]
+  },
+  {
+    "name": "NVIDIA",
+    "industry": "semiconductor",
+    "subSegment": "Fabless",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "神中神",
+    "salary": "50W+",
+    "locations": ["上海", "北京"]
+  },
+  {
+    "name": "Qualcomm 高通",
+    "industry": "semiconductor",
+    "subSegment": "Fabless",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "外企标杆",
+    "salary": "30-45W",
+    "locations": ["上海", "北京"]
+  },
+  {
+    "name": "卓胜微 / 韦尔股份 / 兆易创新 / 紫光国微 / 澜起科技 / 格科微",
+    "industry": "semiconductor",
+    "subSegment": "Fabless",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "国内 Fabless 第二梯队",
+    "salary": "22-35W",
+    "locations": ["上海", "深圳", "杭州"]
+  },
+  {
+    "name": "ASML",
+    "industry": "semiconductor",
+    "subSegment": "Vendor",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "材料人最佳归宿",
+    "salary": "30-45W",
+    "locations": ["上海", "深圳"],
+    "note": "五大 vendor 之首"
+  },
+  {
+    "name": "Applied Materials 应用材料",
+    "industry": "semiconductor",
+    "subSegment": "Vendor",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "材料人最佳归宿",
+    "salary": "25-40W",
+    "locations": ["上海", "深圳", "西安"]
+  },
+  {
+    "name": "Lam Research",
+    "industry": "semiconductor",
+    "subSegment": "Vendor",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "材料人最佳归宿",
+    "salary": "25-40W",
+    "locations": ["上海"]
+  },
+  {
+    "name": "TEL / KLA",
+    "industry": "semiconductor",
+    "subSegment": "Vendor",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "材料人最佳归宿",
+    "salary": "25-40W",
+    "locations": ["上海", "北京"]
+  },
+  {
+    "name": "北方华创 / 中微半导体 / 新凯来 / 宇量昇",
+    "industry": "semiconductor",
+    "subSegment": "Vendor",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "国产 Vendor 前景大",
+    "salary": "22-35W",
+    "locations": ["北京", "上海"],
+    "note": "去国产优先研发、其次 FAE"
+  },
+  {
+    "name": "上海精测 / 中科飞测 / 东方晶源 / 天准科技",
+    "industry": "semiconductor",
+    "subSegment": "Vendor",
+    "companyType": "private_manufacturing",
+    "rating": "🟡",
+    "tag": "国产 Vendor 中坚",
+    "salary": "20-30W",
+    "locations": ["上海", "深圳"]
+  },
+  {
+    "name": "宁德时代 CATL",
+    "industry": "new_energy",
+    "subSegment": "动力电池",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "新能源天花板",
+    "salary": "28-40W",
+    "locations": ["宁德", "上海", "厦门"]
+  },
+  {
+    "name": "比亚迪 BYD",
+    "industry": "new_energy",
+    "subSegment": "新能源车+电池",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "全产业链",
+    "salary": "20-35W",
+    "locations": ["深圳", "西安", "长沙"]
+  },
+  {
+    "name": "国轩高科 / 蜂巢能源 / 中创新航",
+    "industry": "new_energy",
+    "subSegment": "动力电池",
+    "companyType": "private_manufacturing",
+    "rating": "🟡",
+    "tag": "电池第二梯队",
+    "salary": "20-30W",
+    "locations": ["合肥", "常州"]
+  },
+  {
+    "name": "隆基绿能 / 通威 / 晶科能源",
+    "industry": "new_energy",
+    "subSegment": "光伏",
+    "companyType": "private_manufacturing",
+    "rating": "🟡",
+    "tag": "光伏龙头",
+    "salary": "20-30W",
+    "locations": ["西安", "成都"]
+  },
+  {
+    "name": "蔚来 / 小鹏 / 理想",
+    "industry": "auto",
+    "subSegment": "造车新势力",
+    "companyType": "private_internet",
+    "rating": "🟢",
+    "tag": "造车三剑客",
+    "salary": "28-45W",
+    "locations": ["合肥", "广州", "北京", "上海"]
+  },
+  {
+    "name": "华为车 BU",
+    "industry": "auto",
+    "subSegment": "智能座舱/自动驾驶",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "热门",
+    "salary": "28-45W",
+    "locations": ["深圳", "上海"]
+  },
+  {
+    "name": "特斯拉",
+    "industry": "auto",
+    "subSegment": "外资车企",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "外资标杆",
+    "salary": "30-45W",
+    "locations": ["上海"]
+  },
+  {
+    "name": "博世 / 大陆",
+    "industry": "auto",
+    "subSegment": "Tier1 供应商",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "外资 Tier1",
+    "salary": "25-35W",
+    "locations": ["上海", "苏州"]
+  },
+  {
+    "name": "华为",
+    "industry": "telecom",
+    "subSegment": "ICT 设备商",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "通信硬通货",
+    "salary": "20-40W（13B 17-20K / 14B 23-25K / 14A 25-27K）",
+    "locations": ["深圳", "杭州", "西安", "成都", "上海"],
+    "note": "录取难度 数能 > 车BU > 终端 > 2012 ≈ 海思；优先级反过来"
+  },
+  {
+    "name": "中兴通讯 ZTE",
+    "industry": "telecom",
+    "subSegment": "通信设备",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "通信第二梯队",
+    "salary": "18-30W",
+    "locations": ["深圳", "南京", "西安"]
+  },
+  {
+    "name": "TP-Link 普联",
+    "industry": "telecom",
+    "subSegment": "网络设备",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "硬件高薪 dark horse",
+    "salary": "24.5-50W",
+    "locations": ["深圳", "上海", "成都"]
+  },
+  {
+    "name": "Ericsson 爱立信 / Nokia 诺基亚",
+    "industry": "telecom",
+    "subSegment": "外资通信",
+    "companyType": "foreign",
+    "rating": "🟡",
+    "tag": "WLB 好",
+    "salary": "18-28W",
+    "locations": ["北京", "成都", "杭州", "上海"]
+  },
+  {
+    "name": "中国移动/电信/联通",
+    "industry": "telecom",
+    "subSegment": "运营商",
+    "companyType": "soe",
+    "rating": "🟡",
+    "tag": "稳如狗",
+    "salary": "10-18W（总部/研究院 14-22W）",
+    "locations": ["全国"]
+  },
+  {
+    "name": "中国通信服务",
+    "industry": "telecom",
+    "subSegment": "通信设计",
+    "companyType": "soe",
+    "rating": "🟡",
+    "tag": "国央企",
+    "salary": "10-20W",
+    "locations": ["广东", "全国"]
+  },
+  {
+    "name": "中国通号研究院",
+    "industry": "aerospace",
+    "subSegment": "交通信号",
+    "companyType": "soe",
+    "rating": "🟢",
+    "tag": "国央企 + 北京户口",
+    "salary": "20-28W",
+    "locations": ["北京"],
+    "note": "硕士七险两金、择优解决北京户口"
+  },
+  {
+    "name": "中国电子科技集团 / 中国航天科工/科技",
+    "industry": "aerospace",
+    "subSegment": "军工央企",
+    "companyType": "research_institute",
+    "rating": "🟢",
+    "tag": "户口最强",
+    "salary": "15-25W",
+    "locations": ["北京", "西安", "成都"],
+    "note": "航天一/五/九院最难进、薪资待遇最好"
+  },
+  {
+    "name": "华为 / 小米 / OPPO / vivo / 联想",
+    "industry": "consumer_electronics",
+    "subSegment": "终端品牌",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "硬通货",
+    "salary": "20-35W",
+    "locations": ["深圳", "北京", "东莞", "重庆"]
+  },
+  {
+    "name": "京东方 / 歌尔股份",
+    "industry": "consumer_electronics",
+    "subSegment": "显示/声学元件",
+    "companyType": "private_manufacturing",
+    "rating": "🟡",
+    "tag": "果链",
+    "salary": "18-28W",
+    "locations": ["北京", "潍坊", "成都"]
+  },
+  {
+    "name": "美的 / 格力",
+    "industry": "consumer_electronics",
+    "subSegment": "智能家居/家电",
+    "companyType": "private_manufacturing",
+    "rating": "🟡",
+    "tag": "传统家电龙头",
+    "salary": "18-28W",
+    "locations": ["佛山", "珠海"]
+  },
+  {
+    "name": "迈瑞医疗",
+    "industry": "medical",
+    "subSegment": "医疗影像/诊断",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "医疗龙头",
+    "salary": "22-32W",
+    "locations": ["深圳", "南京", "西安"]
+  },
+  {
+    "name": "联影医疗 / 开立医疗 / 海柔创新",
+    "industry": "medical",
+    "subSegment": "高端医疗设备",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "科创板",
+    "salary": "20-30W",
+    "locations": ["上海", "深圳"]
+  },
+  {
+    "name": "Medtronic 美敦力 / ResMed 瑞思迈",
+    "industry": "medical",
+    "subSegment": "外资医疗",
+    "companyType": "foreign",
+    "rating": "🟡",
+    "tag": "外资医疗",
+    "salary": "25-35W",
+    "locations": ["上海", "新加坡"]
+  },
+  {
+    "name": "大疆 DJI",
+    "industry": "industrial_robotics",
+    "subSegment": "无人机/相机",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "硬件大厂",
+    "salary": "28-40W",
+    "locations": ["深圳"]
+  },
+  {
+    "name": "宇树科技 / 拓竹科技 / 速腾聚创",
+    "industry": "industrial_robotics",
+    "subSegment": "机器人/3D打印/激光雷达",
+    "companyType": "startup",
+    "rating": "🟢",
+    "tag": "具身智能风口",
+    "salary": "25-40W",
+    "locations": ["杭州", "深圳"]
+  },
+  {
+    "name": "Insta360 影石",
+    "industry": "consumer_electronics",
+    "subSegment": "智能相机",
+    "companyType": "private_manufacturing",
+    "rating": "🟢",
+    "tag": "Linux 嵌入式岗位",
+    "salary": "25-40W",
+    "locations": ["深圳"]
+  },
+  {
+    "name": "西门子 / 博世（工业）",
+    "industry": "industrial_robotics",
+    "subSegment": "工业自动化",
+    "companyType": "foreign",
+    "rating": "🟢",
+    "tag": "外资工业龙头",
+    "salary": "20-30W",
+    "locations": ["北京", "上海", "苏州"]
+  },
+  {
+    "name": "阿里巴巴 / 腾讯 / 字节跳动",
+    "industry": "internet",
+    "subSegment": "互联网大厂",
+    "companyType": "private_internet",
+    "rating": "🟢",
+    "tag": "现金最高",
+    "salary": "35-60W",
+    "locations": ["杭州", "深圳", "北京", "上海"]
+  },
+  {
+    "name": "阿里云 / 腾讯云 / 华为云",
+    "industry": "internet",
+    "subSegment": "云计算",
+    "companyType": "private_internet",
+    "rating": "🟢",
+    "tag": "云服务",
+    "salary": "30-50W",
+    "locations": ["杭州", "深圳"]
+  },
+  {
+    "name": "工/农/中/建/交（金融科技部）",
+    "industry": "fintech",
+    "subSegment": "六大行金科",
+    "companyType": "soe",
+    "rating": "🟡",
+    "tag": "国央企 + 户口",
+    "salary": "15-25W",
+    "locations": ["北京", "上海"]
+  }
+]

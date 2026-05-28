@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>后台配置 | WayTo</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="nav">
+        <div class="brand">
+          <span style="width:10px;height:10px;border-radius:999px;background:var(--accent)"></span>
+          <span>WayTo 后台配置</span>
+          <span class="badge">JSON驱动 · 可热更新</span>
+        </div>
+        <div class="row noPrint" style="margin:0">
+          <a class="btn" href="/">首页</a>
+          <a class="btn" href="/analytics.html">看板</a>
+          <a class="btn" id="exportBtn" href="#">导出数据</a>
+        </div>
+      </div>
+
+      <div class="cards" style="margin-top:14px">
+        <div class="card">
+          <h3>1）输入后台密码</h3>
+          <p>默认密码为 <code>admin</code>，可用环境变量 <code>ADMIN_PASSWORD</code> 修改。</p>
+          <div class="row noPrint">
+            <input id="pw" placeholder="ADMIN_PASSWORD" style="flex:1;min-width:220px;padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text)" />
+            <button class="btn primary" id="loadBtn">加载</button>
+          </div>
+          <div class="hint" id="pwHint"></div>
+        </div>
+        <div class="card">
+          <h3>2）选择配置文件</h3>
+          <p>建议先改小范围（例如项目库/职业库/模板）再改题库。</p>
+          <div class="row noPrint">
+            <select id="fileSel" style="flex:1;min-width:260px;padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text)">
+              <option value="model">data/model.json（6 维模型）</option>
+              <option value="questionBank.v1">data/questionBank.v1.json（题库 + 角色卡 + 关卡）</option>
+              <option value="industries">data/industries.json（行业）</option>
+              <option value="roles">data/roles.json（岗位族）</option>
+              <option value="companyTypes">data/companyTypes.json（公司类型）</option>
+              <option value="companies">data/companies.json（代表公司清单）</option>
+              <option value="programs.v1">data/programs.v1.json（推荐项目）</option>
+              <option value="lifestylePrefs">data/lifestylePrefs.json（生活方式枚举）</option>
+              <option value="scenarios">data/scenarios.json（真实情境题）</option>
+              <option value="rules.v1">data/rules.v1.json（朋友式真话 + 跨度表）</option>
+              <option value="templates.v1">data/templates.v1.json</option>
+            </select>
+            <button class="btn" id="reloadBtn">刷新</button>
+            <button class="btn good" id="saveBtn">保存</button>
+            <button class="btn" id="testLlmBtn">测试 LLM</button>
+          </div>
+          <div class="hint" id="fileHint"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h2>JSON编辑器</h2>
+        <p class="muted" style="margin-top:8px">直接编辑并保存，服务端会覆盖对应的 `data/*.json` 文件。</p>
+        <textarea id="editor" spellcheck="false" style="width:100%;height:520px;margin-top:12px;padding:12px;border-radius:16px;border:1px solid var(--border);background:rgba(0,0,0,.22);color:rgba(231,238,252,.92);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;line-height:1.5"></textarea>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+    <script>
+      const st = { pw: "" };
+      function adminApi(name, { method = "GET", body } = {}) {
+        const pw = encodeURIComponent(st.pw);
+        return api(`/api/admin/${name}?password=${pw}`, { method, body });
+      }
+
+      qs("#exportBtn").onclick = (e) => {
+        e.preventDefault();
+        if (!st.pw) {
+          qs("#pwHint").textContent = "请先输入密码。";
+          return;
+        }
+        location.href = `/api/admin/export?password=${encodeURIComponent(st.pw)}`;
+      };
+
+      async function loadSelected() {
+        if (!st.pw) {
+          qs("#pwHint").textContent = "请先输入密码。";
+          return;
+        }
+        const key = qs("#fileSel").value;
+        qs("#fileHint").textContent = "加载中…";
+        try {
+          const json = await adminApi(key);
+          qs("#editor").value = JSON.stringify(json, null, 2);
+          qs("#fileHint").textContent = "已加载。";
+        } catch (e) {
+          qs("#fileHint").textContent = `加载失败：${e.message}`;
+        }
+      }
+
+      qs("#loadBtn").onclick = async () => {
+        st.pw = qs("#pw").value.trim();
+        qs("#pwHint").textContent = st.pw ? "密码已记录。" : "请输入密码。";
+        await loadSelected();
+      };
+      qs("#reloadBtn").onclick = loadSelected;
+      qs("#fileSel").onchange = loadSelected;
+      qs("#saveBtn").onclick = async () => {
+        if (!st.pw) return (qs("#pwHint").textContent = "请先输入密码。");
+        const key = qs("#fileSel").value;
+        qs("#fileHint").textContent = "保存中…";
+        try {
+          const raw = qs("#editor").value;
+          const json = JSON.parse(raw);
+          await adminApi(key, { method: "PUT", body: json });
+          qs("#fileHint").textContent = "已保存。";
+          track("admin_save", { key });
+        } catch (e) {
+          qs("#fileHint").textContent = `保存失败：${e.message}`;
+        }
+      };
+
+      qs("#testLlmBtn").onclick = async () => {
+        if (!st.pw) return (qs("#fileHint").textContent = "请先输入密码。");
+        qs("#fileHint").textContent = "正在测试 LLM 调用（10-15 秒）…";
+        try {
+          const res = await fetch(`/api/admin/test-llm?password=${encodeURIComponent(st.pw)}`, { method: "POST" });
+          const json = await res.json();
+          qs("#fileHint").textContent = "LLM 测试结果（见编辑器）。";
+          qs("#editor").value = JSON.stringify(json, null, 2);
+        } catch (e) {
+          qs("#fileHint").textContent = `测试失败：${e.message}`;
+        }
+      };
+
+      track("admin_view");
+    </script>
+  </body>
+</html>
+

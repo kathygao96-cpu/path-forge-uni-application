@@ -1,0 +1,532 @@
+{
+  "meta": {
+    "id": "wayto-forge-v1",
+    "version": "v1",
+    "language": "zh-CN",
+    "description": "留学冶炼屋（理工版）v1：信息登记 + 4 步诊断（学业评估/跨度检验/方向定型/执行打磨）"
+  },
+  "roleCard": {
+    "title": "底牌登记",
+    "steps": [
+      {
+        "id": "rc_register",
+        "title": "先认识一下",
+        "intro": "30 秒，告诉我你是谁、处在哪个阶段。",
+        "fields": [
+          {
+            "id": "rc_nickname",
+            "label": "怎么称呼你",
+            "type": "text",
+            "required": false,
+            "placeholder": "例：小铁匠"
+          },
+          {
+            "id": "rc_ore_type",
+            "label": "你的专业属性",
+            "type": "single",
+            "required": true,
+            "options": [
+              { "id": "shadow", "label": "⚫ 代码算法（CS/AI/软件/数据）" },
+              { "id": "flame", "label": "🔴 电子能量（EE/通信/自动化/能源）" },
+              { "id": "nature", "label": "🟢 生化材料（Bio/Chem/医药/材料）" },
+              { "id": "earth", "label": "🟤 实体工程（机械/土木/环境/建筑）" },
+              { "id": "crystal", "label": "⚪ 数理逻辑（数学/物理/天文/统计）" }
+            ]
+          },
+          {
+            "id": "rc_stage",
+            "label": "当前阶段",
+            "type": "single",
+            "required": true,
+            "options": [
+              { "id": "freshman", "label": "大一" },
+              { "id": "sophomore", "label": "大二" },
+              { "id": "junior", "label": "大三" },
+              { "id": "senior", "label": "大四" },
+              { "id": "gap", "label": "已毕业（gap）" },
+              { "id": "working", "label": "工作中" },
+              { "id": "master_in", "label": "研究生在读" }
+            ]
+          },
+          {
+            "id": "rc_apply_season",
+            "label": "预计申请季",
+            "type": "single",
+            "required": true,
+            "options": [
+              { "id": "26fall", "label": "26 Fall" },
+              { "id": "27fall", "label": "27 Fall" },
+              { "id": "28fall", "label": "28 Fall" },
+              { "id": "unknown", "label": "不确定" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rc_academic",
+        "title": "核心底牌",
+        "intro": "院校 + 专业 + 成绩 + 目标学位，这四项决定了你的起点。",
+        "fields": [
+          {
+            "id": "rc_school_tier",
+            "label": "本科院校层级",
+            "type": "single",
+            "required": true,
+            "options": [
+              { "id": "c9", "label": "C9 / 顶尖 985" },
+              { "id": "985", "label": "985" },
+              { "id": "211", "label": "211" },
+              { "id": "shuangfei", "label": "双非（一本/二本）" },
+              { "id": "overseas", "label": "海外本科" },
+              { "id": "joint", "label": "中外合办" }
+            ]
+          },
+          {
+            "id": "rc_major",
+            "label": "本科专业",
+            "type": "single",
+            "required": true,
+            "options": [
+              { "id": "cs_ai", "label": "计算机 / AI / 数据科学" },
+              { "id": "ee_comm", "label": "电子 / 通信 / 微电子" },
+              { "id": "me_auto", "label": "机械 / 自动化" },
+              { "id": "mat_chem", "label": "材料 / 化工 / 能源" },
+              { "id": "bio", "label": "生物医药" },
+              { "id": "biz_cross", "label": "商科 / 交叉 / 文科" },
+              { "id": "math_phy", "label": "数学 / 物理 / 统计" },
+              { "id": "other", "label": "其他（请具体说明）", "type": "text" }
+            ]
+          },
+          {
+            "id": "rc_gpa",
+            "label": "GPA（百分制）",
+            "type": "slider",
+            "min": 60,
+            "max": 100,
+            "step": 0.5,
+            "default": 80,
+            "required": false
+          },
+          {
+            "id": "rc_target_degree",
+            "label": "目标学位",
+            "type": "single",
+            "required": true,
+            "options": [
+              { "id": "taught", "label": "授课型硕士" },
+              { "id": "research", "label": "研究型硕士" },
+              { "id": "phd", "label": "博士" },
+              { "id": "unknown", "label": "不确定" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "gates": [
+    {
+      "id": "academic",
+      "title": "第一步 · 学业评估（粗筛）",
+      "subtitle": "检验学业基础：院校 + GPA + 已修课 + 硬技能",
+      "npc": "academics",
+      "intro": "路径导师：先了解你的学业底牌——修过什么课、能用什么工具，别讲概念，说具体的。",
+      "questions": ["q_core_courses", "q_skills_have", "q_best_project"],
+      "scenarios": []
+    },
+    {
+      "id": "gap",
+      "title": "第二步 · 跨度检验（熔炼）",
+      "subtitle": "评估跨界难度：转专业距离 + 素材盘点",
+      "npc": "math_cs",
+      "intro": "路径导师：跨度不是「你觉得跨多大」——是「现在让你讲，能讲出多少」。素材有没有不重要，能不能讲、有没有证据，才重要。",
+      "questions": ["q_gap_self_assess", "q_bridge_action", "q_internship", "q_research_output", "q_project_evidence", "q_other_highlights"],
+      "scenarios": []
+    },
+    {
+      "id": "clarity",
+      "title": "第三步 · 方向定型（精炼）",
+      "subtitle": "明确方向：目标定位 + 生活方式匹配",
+      "npc": "positioning",
+      "intro": "路径导师：先告诉我——你绝对不会去的是哪些？技术能力之外，我们更想知道你能接受什么样的生活节奏。",
+      "questions": ["q_shift_work", "q_onsite", "q_travel", "q_priority", "q_personality"],
+      "scenarios": ["scn_avoid_first"]
+    },
+    {
+      "id": "execution",
+      "title": "第四步 · 执行打磨（开刃）",
+      "subtitle": "推进落地：时间线意识 + 简历 + 内推网络",
+      "npc": "lead",
+      "intro": "路径导师：能力够了，看你执行——你的简历、英文版、内推渠道，准备到哪一步了？",
+      "questions": ["q_execution_score"],
+      "scenarios": ["scn_timeline_awareness", "scn_resume_state", "scn_referral_awareness"]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_core_courses",
+      "gate": "academic",
+      "title": "你已经修过的核心课/相关课，勾选所有适用的大类",
+      "context": "导师看的不是「覆盖度高/中/低」，而是你具体修过哪几门——这决定了你能讲什么、招生官信什么。",
+      "type": "multi",
+      "options": [
+        { "id": "math_base", "label": "数学基础（线代 / 概率 / 微积分 / 优化）" },
+        { "id": "programming", "label": "编程与算法（数据结构 / C++ / Java / Python / ML）" },
+        { "id": "elec_circuit", "label": "电子电路（电路分析 / 数字电路 / 信号与系统 / DSP）" },
+        { "id": "semi_ic", "label": "半导体与集成电路（半导体物理 / VLSI / 射频 / 电磁场）" },
+        { "id": "mat_chem", "label": "材料/化学/热力学（材料科学 / 物理化学 / 电化学 / 传热）" },
+        { "id": "mech_control", "label": "机械与控制（机械设计 / 工程力学 / 自控）" },
+        { "id": "sys_network", "label": "计算机系统（操作系统 / 计算机网络 / 计算机组成）" },
+        { "id": "other", "label": "其他（请具体说明）", "type": "text" }
+      ],
+      "scoring": {
+        "options": {
+          "math_base": { "academic": 6 },
+          "programming": { "academic": 6, "gap": 3 },
+          "elec_circuit": { "academic": 5 },
+          "semi_ic": { "academic": 6, "gap": 4 },
+          "mat_chem": { "academic": 6, "gap": 3 },
+          "mech_control": { "academic": 5 },
+          "sys_network": { "academic": 5 },
+          "other": { "academic": 3 }
+        }
+      }
+    },
+    {
+      "id": "q_skills_have",
+      "gate": "academic",
+      "title": "你掌握的硬技能（多选；面试时能马上用的）",
+      "context": "技能要「用过项目」才算掌握。课程作业的水平先别勾。",
+      "type": "multi",
+      "options": [
+        { "id": "python_ml", "label": "Python + ML / 深度学习（PyTorch / TensorFlow / 数据处理）" },
+        { "id": "cpp", "label": "C / C++（手写过算法或项目）" },
+        { "id": "chip_design", "label": "芯片设计与验证（Verilog / UVM / EDA / TCAD）" },
+        { "id": "cad_cae", "label": "CAD / CAE（SolidWorks / Ansys / Abaqus / AutoCAD）" },
+        { "id": "lab_test", "label": "实验与表征（XRD / SEM / 电化学 / 生化实验）" },
+        { "id": "linux_dev", "label": "Linux 开发 / PCB Layout / 嵌入式" },
+        { "id": "matlab_sim", "label": "MATLAB / 数值模拟 / 仿真工具" },
+        { "id": "other", "label": "其他（请具体说明）", "type": "text" }
+      ],
+      "scoring": {
+        "options": {
+          "python_ml": { "experience": 10, "gap": 4 },
+          "cpp": { "experience": 8 },
+          "chip_design": { "experience": 12, "gap": 5 },
+          "cad_cae": { "experience": 9 },
+          "lab_test": { "experience": 8 },
+          "linux_dev": { "experience": 8, "gap": 3 },
+          "matlab_sim": { "experience": 6 },
+          "other": { "experience": 5 }
+        }
+      }
+    },
+    {
+      "id": "q_best_project",
+      "gate": "academic",
+      "title": "用一句话讲你最能拿得出手的项目（可以贴 GitHub / 网页链接；不强制填）",
+      "context": "招生官/HR 会在 6-10 秒里扫你的简历。把最能让他停下来的那行项目写在这里。",
+      "type": "text",
+      "placeholder": "例：基于 PyTorch 实现 YOLOv8 缺陷检测，mAP 提升 11%，已部署到某产线｜https://github.com/xxx"
+    },
+    {
+      "id": "q_gap_self_assess",
+      "gate": "gap",
+      "title": "假设现在你要去目标方向的面试，下面这些你能 *自信地展开讲* 哪些？（多选；选不上的就空着）",
+      "context": "导师问跨度，不会问「你觉得跨度多大」，会让你试讲一段——讲不出来就是跨度大。",
+      "type": "multi",
+      "options": [
+        { "id": "tech_principle", "label": "目标方向的核心技术原理（如：半导体物理 / 电化学 / 卷积神经网络）" },
+        { "id": "tech_skill_demo", "label": "至少 1 个你做过的、能体现目标方向能力的项目" },
+        { "id": "industry_landscape", "label": "目标行业的产业链 + 头部公司 + 当前痛点" },
+        { "id": "target_jd", "label": "你想去的 3 家公司的具体岗位 JD（不只是公司名）" },
+        { "id": "story_arc", "label": "「我为什么从原专业转 X 方向」的完整故事" },
+        { "id": "none", "label": "都讲不太清楚" }
+      ],
+      "scoring": {
+        "options": {
+          "tech_principle": { "gap": 18 }, "tech_skill_demo": { "gap": 18, "experience": 8 },
+          "industry_landscape": { "gap": 12, "clarity": 8 }, "target_jd": { "gap": 12, "clarity": 12 },
+          "story_arc": { "gap": 16, "execution": 8 }, "none": { "gap": 0 }
+        }
+      }
+    },
+    {
+      "id": "q_bridge_action",
+      "gate": "gap",
+      "title": "为了补跨度，你已经做过 / 正在做哪些具体动作？（多选）",
+      "type": "multi",
+      "options": [
+        { "id": "self_study", "label": "自学（MOOC / 教材 / 技术博客 / 公众号）" },
+        { "id": "selective", "label": "选修了目标方向的课程" },
+        { "id": "side_project", "label": "做了目标方向的个人/小组项目" },
+        { "id": "lab", "label": "进了相关课题组做科研" },
+        { "id": "intern", "label": "找了一段相关方向的实习" },
+        { "id": "comp", "label": "参加了相关方向的竞赛" },
+        { "id": "other", "label": "其他（请具体说明）", "type": "text" }
+      ],
+      "scoring": {
+        "options": {
+          "self_study": { "gap": 6, "clarity": 5 },
+          "selective": { "gap": 8 },
+          "side_project": { "gap": 14, "experience": 10 },
+          "lab": { "gap": 14, "experience": 14 },
+          "intern": { "gap": 18, "experience": 18 },
+          "comp": { "gap": 10, "experience": 8 },
+          "other": { "gap": 5 }
+        }
+      }
+    },
+    {
+      "id": "q_internship",
+      "gate": "gap",
+      "title": "实习经历（多选最接近你情况的）",
+      "context": "「相关」= 公司岗位与你目标方向匹配；「头部」= 公司在该行业 Top 10。",
+      "type": "multi",
+      "options": [
+        { "id": "none", "label": "都没有" },
+        { "id": "course_internship", "label": "只做过课程实践 / 短期参观式实习" },
+        { "id": "one_unrelated", "label": "1 段不相关方向" },
+        { "id": "one_relevant", "label": "1 段相关方向的实习" },
+        { "id": "two_relevant", "label": "2 段及以上相关方向" },
+        { "id": "top_company", "label": "在头部企业（华为/海思/中芯/宁德/字节等）实习过" },
+        { "id": "other", "label": "其他（请具体说明）", "type": "text" }
+      ],
+      "scoring": {
+        "options": {
+          "none": { "experience": 0 }, "course_internship": { "experience": 8 },
+          "one_unrelated": { "experience": 12, "clarity": 4 }, "one_relevant": { "experience": 30, "clarity": 8 },
+          "two_relevant": { "experience": 45, "clarity": 12 },
+          "top_company": { "experience": 30, "execution": 8 }, "other": { "experience": 20 }
+        }
+      }
+    },
+    {
+      "id": "q_research_output",
+      "gate": "gap",
+      "title": "科研产出（按你能直接证明的算，多选）",
+      "context": "导师关心你能不能讲出「方法 + 实验 + 结论」——是不是一作反而其次。",
+      "type": "multi",
+      "options": [
+        { "id": "none", "label": "没有科研经历" },
+        { "id": "proj_level", "label": "课程项目 / 大创 / 校内科研立项" },
+        { "id": "lab_assist", "label": "进了实验室（半年以上，含打杂/助研）" },
+        { "id": "lab_topic", "label": "独立负责实验室小课题" },
+        { "id": "paper", "label": "有论文（含共同作者/一作/在投）" },
+        { "id": "patent_award", "label": "有专利 / 国家级竞赛奖（挑战杯/国创等）" },
+        { "id": "other", "label": "其他（请具体说明）", "type": "text" }
+      ],
+      "scoring": {
+        "options": {
+          "none": { "experience": 0 },
+          "proj_level": { "experience": 12, "execution": 3 },
+          "lab_assist": { "experience": 18 },
+          "lab_topic": { "experience": 28, "gap": 6 },
+          "paper": { "experience": 24, "academic": 4 },
+          "patent_award": { "experience": 18, "execution": 4 },
+          "other": { "experience": 10 }
+        }
+      }
+    },
+    {
+      "id": "q_project_evidence",
+      "gate": "gap",
+      "title": "你最强的一个项目，可以马上提供哪些 *硬证据*？（多选）",
+      "context": "面试官只信他能看到 / 跑起来 / 验证的东西。",
+      "type": "multi",
+      "options": [
+        { "id": "github", "label": "GitHub 仓库 / 代码可跑" },
+        { "id": "demo", "label": "Demo 视频 / 在线演示" },
+        { "id": "poster", "label": "技术海报 / 1 页技术总结" },
+        { "id": "metrics", "label": "明确的量化指标 + 对比基线" },
+        { "id": "contribution_pct", "label": "能说清楚自己贡献占比（不是「我参与了」）" },
+        { "id": "failure_log", "label": "能讲失败记录和改进路径" },
+        { "id": "nothing_strong", "label": "还没准备好这些" }
+      ],
+      "scoring": {
+        "options": {
+          "github": { "experience": 12, "execution": 4 }, "demo": { "experience": 10 },
+          "poster": { "experience": 10, "execution": 4 }, "metrics": { "experience": 18 },
+          "contribution_pct": { "experience": 14, "execution": 6 }, "failure_log": { "experience": 12 },
+          "nothing_strong": { "experience": 0 }
+        }
+      }
+    },
+    {
+      "id": "q_other_highlights",
+      "gate": "gap",
+      "title": "其他亮点（多选；都没有就跳过）",
+      "type": "multi",
+      "options": [
+        { "id": "exchange_camp", "label": "交换 / 夏校 / 海外学习" },
+        { "id": "startup", "label": "创业 / 独立项目" },
+        { "id": "portfolio", "label": "作品集 / 个人网站 / GitHub 有影响力" },
+        { "id": "media", "label": "自媒体（小红书 / B 站 / 知乎等）有粉丝" },
+        { "id": "leadership", "label": "学生组织/社团负责人 + 明确成果" },
+        { "id": "comp_award", "label": "国际/国家级竞赛获奖" },
+        { "id": "other", "label": "其他（请具体说明）", "type": "text" }
+      ],
+      "scoring": {
+        "options": {
+          "exchange_camp": { "experience": 8, "execution": 5 },
+          "startup": { "experience": 10, "clarity": 6 },
+          "portfolio": { "experience": 10, "execution": 8 },
+          "media": { "execution": 6, "clarity": 4 },
+          "leadership": { "experience": 6, "fit": 4 },
+          "comp_award": { "experience": 10, "execution": 5 },
+          "other": { "experience": 5 }
+        }
+      }
+    },
+    {
+      "id": "q_shift_work",
+      "gate": "clarity",
+      "title": "你愿意接受倒班 / 夜班吗？",
+      "type": "single",
+      "options": [
+        { "id": "no", "label": "完全不能接受" },
+        { "id": "short", "label": "短期可以，长期不行" },
+        { "id": "ok", "label": "可以接受，看薪资" },
+        { "id": "ok_high", "label": "钱给够都可以" }
+      ],
+      "scoring": {
+        "options": {
+          "no": { "fit": 22 }, "short": { "fit": 20 }, "ok": { "fit": 18 }, "ok_high": { "fit": 16 }
+        }
+      },
+      "preferenceTag": "shift_work"
+    },
+    {
+      "id": "q_onsite",
+      "gate": "clarity",
+      "title": "驻厂工作 / 长期无尘室，能接受吗？",
+      "type": "single",
+      "options": [
+        { "id": "no", "label": "不接受" },
+        { "id": "office_first", "label": "尽量办公室" },
+        { "id": "mixed_ok", "label": "实验室+办公室混合可以" },
+        { "id": "ok", "label": "完全接受" }
+      ],
+      "scoring": {
+        "options": {
+          "no": { "fit": 20 }, "office_first": { "fit": 18 }, "mixed_ok": { "fit": 16 }, "ok": { "fit": 14 }
+        }
+      },
+      "preferenceTag": "onsite"
+    },
+    {
+      "id": "q_travel",
+      "gate": "clarity",
+      "title": "你能接受多大比例的出差？",
+      "type": "single",
+      "options": [
+        { "id": "no", "label": "不接受出差" },
+        { "id": "low", "label": "<10%" },
+        { "id": "mid", "label": "10-30%" },
+        { "id": "high", "label": ">30%（含驻外）" }
+      ],
+      "scoring": {
+        "options": {
+          "no": { "fit": 18 }, "low": { "fit": 16 }, "mid": { "fit": 14 }, "high": { "fit": 12 }
+        }
+      },
+      "preferenceTag": "travel"
+    },
+    {
+      "id": "q_priority",
+      "gate": "clarity",
+      "title": "选 offer 时你的第一优先级是？",
+      "type": "single",
+      "options": [
+        { "id": "salary", "label": "💰 薪资最高" },
+        { "id": "wlb", "label": "🧘 WLB（不加班）" },
+        { "id": "stability", "label": "🛡️ 稳定" },
+        { "id": "hukou", "label": "📋 户口" },
+        { "id": "platform", "label": "🏢 平台/履历" },
+        { "id": "growth", "label": "🚀 成长速度" }
+      ],
+      "scoring": {
+        "options": {
+          "salary": { "fit": 16, "clarity": 6 }, "wlb": { "fit": 16, "clarity": 6 },
+          "stability": { "fit": 16, "clarity": 6 }, "hukou": { "fit": 16, "clarity": 6 },
+          "platform": { "fit": 16, "clarity": 6 }, "growth": { "fit": 16, "clarity": 6 }
+        }
+      },
+      "preferenceTag": "priority"
+    },
+    {
+      "id": "q_personality",
+      "gate": "clarity",
+      "title": "性格更接近哪种？",
+      "type": "single",
+      "options": [
+        { "id": "introvert_detail", "label": "内向 + 专注细节" },
+        { "id": "introvert_logic", "label": "内向 + 强逻辑" },
+        { "id": "extrovert_comm", "label": "外向 + 沟通强" },
+        { "id": "balanced", "label": "两者都可以切换" }
+      ],
+      "scoring": {
+        "options": {
+          "introvert_detail": { "fit": 14 }, "introvert_logic": { "fit": 14 },
+          "extrovert_comm": { "fit": 14 }, "balanced": { "fit": 16 }
+        }
+      },
+      "preferenceTag": "personality"
+    },
+    {
+      "id": "q_execution_score",
+      "gate": "execution",
+      "title": "如果 10 分满分，你给自己目前的留学准备执行力打几分？",
+      "context": "诚实打分，这不会影响最终结果，但会影响导师给你的建议力度。",
+      "type": "star",
+      "maxStars": 5,
+      "starLabels": ["还没开始", "偶尔想想", "有零散动作", "在推进中", "万事俱备"],
+      "dim": "execution",
+      "scoring": {
+        "stars": {
+          "1": { "execution": 5, "clarity": 2 },
+          "2": { "execution": 12, "clarity": 5 },
+          "3": { "execution": 22, "clarity": 8 },
+          "4": { "execution": 32, "clarity": 12 },
+          "5": { "execution": 40, "clarity": 15 }
+        }
+      }
+    }
+  ],
+  "endChapter": {
+    "title": "终章 · 定稿输出（成器）",
+    "subtitle": "留下联系方式，路径导师将为你生成「留学路径图谱」。",
+    "fields": [
+      {
+        "id": "contact_type",
+        "label": "联系方式类型",
+        "type": "single",
+        "required": true,
+        "options": [
+          { "id": "wechat", "label": "微信" },
+          { "id": "email", "label": "邮箱" },
+          { "id": "phone", "label": "手机号" }
+        ]
+      },
+      {
+        "id": "contact",
+        "label": "联系方式",
+        "type": "text",
+        "required": true
+      },
+      {
+        "id": "budget",
+        "label": "预算范围（一年硕士全口径）",
+        "type": "single",
+        "required": false,
+        "options": [
+          { "id": "lt20", "label": "20 万以内" },
+          { "id": "20_40", "label": "20-40 万" },
+          { "id": "40_60", "label": "40-60 万" },
+          { "id": "60_120", "label": "60-120 万" },
+          { "id": "gt120", "label": "120 万以上" },
+          { "id": "unknown", "label": "不确定" }
+        ]
+      }
+    ]
+  }
+}

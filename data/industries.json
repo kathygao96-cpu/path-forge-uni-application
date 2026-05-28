@@ -1,0 +1,296 @@
+[
+  {
+    "id": "semiconductor",
+    "name": "半导体",
+    "shortName": "半导体",
+    "icon": "🔬",
+    "rating": "🟢",
+    "tagline": "高薪 + 国际化 + 政策红利",
+    "subSegments": ["Fab 晶圆厂", "Fabless 设计", "IDM 一体化", "Vendor 设备/材料/检测"],
+    "salaryBand": "税前 28-35W（研发类应届）",
+    "environment": "Fab 无尘室+办公室；Vendor 出差/驻厂多",
+    "bestFitMajors": ["材料", "微电子", "电子电气", "化工", "机械"],
+    "matchVector": {
+      "academic": 0.75,
+      "gap": 0.7,
+      "experience": 0.7,
+      "clarity": 0.65,
+      "execution": 0.6,
+      "fit": 0.55
+    },
+    "weights": {
+      "academic": 1.1,
+      "gap": 1.0,
+      "experience": 1.2,
+      "clarity": 0.9,
+      "execution": 0.9,
+      "fit": 0.9
+    },
+    "warnings": [
+      "材料人不要碰 IC 设计/数字验证（微电子优先）",
+      "国内 fab 位置基本郊区，社交圈会缩小"
+    ],
+    "friendQuote": "材料人最佳归宿之一就是 ASML/AMAT/Lam/TEL/KLA 五大 vendor。"
+  },
+  {
+    "id": "new_energy",
+    "name": "新能源/储能",
+    "shortName": "新能源",
+    "icon": "🔋",
+    "rating": "🟢",
+    "tagline": "政策强推 + 研发岗位多",
+    "subSegments": ["动力电池", "光伏/储能", "新能源车整车"],
+    "salaryBand": "税前 25-35W",
+    "environment": "实验室 + 中试车间，接触化学试剂",
+    "bestFitMajors": ["材料", "化工", "电子电气", "机械"],
+    "matchVector": {
+      "academic": 0.6,
+      "gap": 0.6,
+      "experience": 0.75,
+      "clarity": 0.6,
+      "execution": 0.6,
+      "fit": 0.6
+    },
+    "weights": {
+      "academic": 0.9,
+      "gap": 0.9,
+      "experience": 1.3,
+      "clarity": 0.9,
+      "execution": 0.9,
+      "fit": 1.0
+    },
+    "warnings": [
+      "研发周期长、行业更新快",
+      "新能源车企加班文化普遍"
+    ],
+    "friendQuote": "材料研发往复合材料/电芯材料靠拢，做好了吃香，做不好就是炒菜师傅。"
+  },
+  {
+    "id": "consumer_electronics",
+    "name": "消费电子",
+    "shortName": "消费电子",
+    "icon": "📱",
+    "rating": "🟢",
+    "tagline": "应用场景直观 + 大厂硬通货",
+    "subSegments": ["手机/平板", "可穿戴", "智能家居", "笔记本/PC"],
+    "salaryBand": "税前 20-30W",
+    "environment": "标准研发室",
+    "bestFitMajors": ["电子电气", "通信", "计算机", "机械", "材料"],
+    "matchVector": {
+      "academic": 0.6,
+      "gap": 0.55,
+      "experience": 0.75,
+      "clarity": 0.6,
+      "execution": 0.65,
+      "fit": 0.6
+    },
+    "weights": {
+      "academic": 0.9,
+      "gap": 0.8,
+      "experience": 1.3,
+      "clarity": 0.9,
+      "execution": 1.0,
+      "fit": 1.0
+    },
+    "friendQuote": "果链（小米/华为/OPPO/vivo/京东方/歌尔）+ 美的/格力都是硬通货。"
+  },
+  {
+    "id": "auto",
+    "name": "新能源车企",
+    "shortName": "车企",
+    "icon": "🚗",
+    "rating": "🟡",
+    "tagline": "应用场景多 + 加班严重",
+    "subSegments": ["整车制造", "智能座舱", "自动驾驶", "三电系统"],
+    "salaryBand": "税前 20-30W",
+    "environment": "研发节奏快、加班普遍",
+    "bestFitMajors": ["机械", "电子电气", "通信", "材料", "计算机"],
+    "matchVector": {
+      "academic": 0.55,
+      "gap": 0.55,
+      "experience": 0.7,
+      "clarity": 0.55,
+      "execution": 0.65,
+      "fit": 0.5
+    },
+    "weights": {
+      "academic": 0.8,
+      "gap": 0.8,
+      "experience": 1.2,
+      "clarity": 0.9,
+      "execution": 1.0,
+      "fit": 1.2
+    },
+    "warnings": ["车企研发节奏快、加班文化普遍，要确认 fit 维度"]
+  },
+  {
+    "id": "medical",
+    "name": "医疗器械/科创",
+    "shortName": "医疗",
+    "icon": "🏥",
+    "rating": "🟡",
+    "tagline": "稳定增长 + 学历门槛高",
+    "subSegments": ["影像/诊断设备", "高值耗材", "医疗信息化"],
+    "salaryBand": "税前 20-30W",
+    "environment": "实验室 + 严格合规",
+    "bestFitMajors": ["材料", "机械", "电子电气", "生物医药"],
+    "matchVector": {
+      "academic": 0.7,
+      "gap": 0.6,
+      "experience": 0.7,
+      "clarity": 0.65,
+      "execution": 0.6,
+      "fit": 0.6
+    },
+    "weights": {
+      "academic": 1.1,
+      "gap": 0.9,
+      "experience": 1.1,
+      "clarity": 0.9,
+      "execution": 0.9,
+      "fit": 0.9
+    },
+    "warnings": ["硕士起步、坑位少"]
+  },
+  {
+    "id": "industrial_robotics",
+    "name": "工业控制/机器人",
+    "shortName": "机器人",
+    "icon": "🤖",
+    "rating": "🟢",
+    "tagline": "具身智能风口 + 跨界融合",
+    "subSegments": ["工业自动化", "服务机器人", "无人机", "3D 打印"],
+    "salaryBand": "税前 20-30W",
+    "environment": "实验室 + 测试场",
+    "bestFitMajors": ["机械", "电子电气", "通信", "计算机", "材料"],
+    "matchVector": {
+      "academic": 0.6,
+      "gap": 0.6,
+      "experience": 0.75,
+      "clarity": 0.6,
+      "execution": 0.6,
+      "fit": 0.55
+    },
+    "weights": {
+      "academic": 0.9,
+      "gap": 0.9,
+      "experience": 1.3,
+      "clarity": 0.9,
+      "execution": 0.9,
+      "fit": 1.0
+    }
+  },
+  {
+    "id": "aerospace",
+    "name": "航空航天/院所",
+    "shortName": "航天",
+    "icon": "🛰️",
+    "rating": "🟡",
+    "tagline": "稳但薪低 + 户口加分",
+    "subSegments": ["航天院所", "商飞", "军工", "卫星通信"],
+    "salaryBand": "税前 15-25W（一/五/九院最难进薪资最好）",
+    "environment": "院所体制，强度可能像私企",
+    "bestFitMajors": ["机械", "电子电气", "通信", "材料", "计算机"],
+    "matchVector": {
+      "academic": 0.7,
+      "gap": 0.6,
+      "experience": 0.65,
+      "clarity": 0.6,
+      "execution": 0.55,
+      "fit": 0.7
+    },
+    "weights": {
+      "academic": 1.2,
+      "gap": 0.8,
+      "experience": 1.0,
+      "clarity": 0.8,
+      "execution": 0.8,
+      "fit": 1.0
+    }
+  },
+  {
+    "id": "telecom",
+    "name": "通信",
+    "shortName": "通信",
+    "icon": "📡",
+    "rating": "🟢",
+    "tagline": "5G/6G + 大厂硬通货",
+    "subSegments": ["设备商（华为/中兴/爱立信/诺基亚）", "运营商", "通信算法/芯片"],
+    "salaryBand": "税前 20-40W（华为/TP-Link 头部）",
+    "environment": "私企卷 / 外企 WLB",
+    "bestFitMajors": ["通信", "电子电气", "计算机"],
+    "matchVector": {
+      "academic": 0.65,
+      "gap": 0.6,
+      "experience": 0.75,
+      "clarity": 0.65,
+      "execution": 0.7,
+      "fit": 0.6
+    },
+    "weights": {
+      "academic": 1.0,
+      "gap": 0.9,
+      "experience": 1.2,
+      "clarity": 0.9,
+      "execution": 1.0,
+      "fit": 1.0
+    }
+  },
+  {
+    "id": "fintech",
+    "name": "金融科技",
+    "shortName": "金融",
+    "icon": "💰",
+    "rating": "🟡",
+    "tagline": "跨界 + 有门槛",
+    "subSegments": ["银行金融科技部", "证券交易所", "量化", "互联网金融"],
+    "salaryBand": "税前 15-25W（国央企）/ 30W+（互联网金融）",
+    "environment": "金融机构 / 互联网",
+    "bestFitMajors": ["计算机", "通信", "数学", "商科"],
+    "matchVector": {
+      "academic": 0.7,
+      "gap": 0.7,
+      "experience": 0.7,
+      "clarity": 0.7,
+      "execution": 0.7,
+      "fit": 0.7
+    },
+    "weights": {
+      "academic": 1.1,
+      "gap": 1.0,
+      "experience": 1.1,
+      "clarity": 1.1,
+      "execution": 1.0,
+      "fit": 0.9
+    }
+  },
+  {
+    "id": "internet",
+    "name": "互联网/云计算",
+    "shortName": "互联网",
+    "icon": "☁️",
+    "rating": "🟢",
+    "tagline": "现金收入最高 + 卷",
+    "subSegments": ["大模型/算法", "云服务", "应用研发", "前后端", "数据"],
+    "salaryBand": "税前 30-50W",
+    "environment": "996/大小周",
+    "bestFitMajors": ["计算机", "AI", "数据科学", "通信"],
+    "matchVector": {
+      "academic": 0.65,
+      "gap": 0.7,
+      "experience": 0.8,
+      "clarity": 0.7,
+      "execution": 0.75,
+      "fit": 0.4
+    },
+    "weights": {
+      "academic": 0.9,
+      "gap": 1.0,
+      "experience": 1.3,
+      "clarity": 1.0,
+      "execution": 1.1,
+      "fit": 1.2
+    },
+    "warnings": ["35 岁中年危机", "996 文化对 fit 维度要求高"]
+  }
+]

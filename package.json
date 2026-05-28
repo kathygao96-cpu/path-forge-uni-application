@@ -1,0 +1,22 @@
+{
+  "name": "path-forge",
+  "version": "1.0.0",
+  "description": "留学冶炼屋（理工版）— 理工留学路径诊断",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "study-abroad",
+    "career",
+    "diagnostic",
+    "rpg",
+    "forge"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,333 @@
+{
+  "meta": {
+    "id": "wayto-scenarios-v1",
+    "version": "v1",
+    "language": "zh-CN",
+    "note": "情境题库——朋友咨询中常用的真实场景，作为关卡 evt_* 题或独立模拟决策环节"
+  },
+  "scenarios": [
+    {
+      "id": "scn_offer_compare_salary_platform",
+      "gate": "clarity",
+      "title": "你拿到 TP-Link 硬件 25K（年包约 36W） 和 华为海思 IC 验证 23K（约 28W）两个 offer，都在深圳。怎么选？",
+      "context": "两份 offer 都是技术岗，TP-Link 现金更高、平台较单一；海思平台强但内卷。",
+      "type": "single",
+      "options": [
+        { "id": "tp", "label": "TP-Link，现金更高、生活质量优先" },
+        { "id": "hisi", "label": "华为海思，平台和履历更重要" },
+        { "id": "negotiate", "label": "先答应海思但同时再谈 TP-Link 涨薪" }
+      ],
+      "scoring": {
+        "options": {
+          "tp": { "clarity": 18, "fit": 12 },
+          "hisi": { "clarity": 15, "execution": 8 },
+          "negotiate": { "clarity": 10, "execution": 12 }
+        }
+      },
+      "commentaryHints": "如果学生 fit 维度偏 WLB/钱，TP-Link 是对的；如果路径偏研发深度，海思更对。"
+    },
+    {
+      "id": "scn_low_gpa_response",
+      "gate": "academic",
+      "title": "面试官追问：你的 GPA 不算亮眼，你凭什么能跟上我们的强度？",
+      "context": "你 GPA 在 3.0-3.3，但有一段相关实习和一个核心课成绩亮眼。",
+      "type": "single",
+      "options": [
+        { "id": "evidence", "label": "用「核心课成绩+后续实习产出」做正面回应" },
+        { "id": "avoid", "label": "强调兴趣和热爱，回避具体分数" },
+        { "id": "story", "label": "用一个具体故事讲清楚自己怎么补的" }
+      ],
+      "scoring": {
+        "options": {
+          "evidence": { "academic": 18, "execution": 8 },
+          "avoid": { "academic": 4, "execution": 2 },
+          "story": { "academic": 15, "experience": 8 }
+        }
+      }
+    },
+    {
+      "id": "scn_cross_field_materials_to_semi",
+      "gate": "gap",
+      "title": "你是材料背景想冲半导体研发，本科只修过 1-2 门相关课。研一第一学期怎么安排？",
+      "context": "目标是申请 NUS MSE 后进半导体；申请季 27 Fall。",
+      "type": "single",
+      "options": [
+        { "id": "course_first", "label": "先把半导体物理/工艺基础课补完再说" },
+        { "id": "intern_first", "label": "尽快进一段相关实习，边做边学" },
+        { "id": "balance", "label": "课程+实习同时启动，并联合做一个垂直项目" },
+        { "id": "research", "label": "先找学校的半导体相关课题组做一段科研" }
+      ],
+      "scoring": {
+        "options": {
+          "course_first": { "gap": 12, "academic": 8 },
+          "intern_first": { "gap": 15, "experience": 12 },
+          "balance": { "gap": 22, "execution": 10, "experience": 8 },
+          "research": { "gap": 14, "experience": 10 }
+        }
+      },
+      "commentaryHints": "balance 最理想，但执行成本高；intern_first 是朋友常推的——「实习 ≈ 科研，最重要是垂直度」。"
+    },
+    {
+      "id": "scn_shift_work_smic",
+      "gate": "fit",
+      "title": "中芯国际工艺工程师 offer 落到你头上：需要倒班 + 驻厂上海。年薪 30W，包宿舍。",
+      "context": "你性格内向、想要稳定的工作生活节奏，但目前没有更好的 offer 在手。",
+      "type": "single",
+      "options": [
+        { "id": "accept", "label": "去，先存钱+学到流程再说" },
+        { "id": "decline", "label": "不去，再等等更合适的" },
+        { "id": "redirect", "label": "去但只接受不倒班的岗位（PIE/良率）" }
+      ],
+      "scoring": {
+        "options": {
+          "accept": { "fit": 8, "execution": 12 },
+          "decline": { "fit": 12, "clarity": 8 },
+          "redirect": { "fit": 18, "clarity": 12 }
+        }
+      },
+      "commentaryHints": "工艺工程师朋友打的是红标。redirect 到 PIE/良率 是黑客式答案。"
+    },
+    {
+      "id": "scn_haitou_vs_targeted",
+      "gate": "execution",
+      "title": "秋招季你投了 30 家进 6 个面试。要不要为剩下的目标公司专门改简历？",
+      "context": "你的简历是通用版本，没有针对每家定制。",
+      "type": "single",
+      "options": [
+        { "id": "customize", "label": "为每家公司专门改简历" },
+        { "id": "haitou", "label": "继续海投通用简历" },
+        { "id": "match_jd", "label": "按 JD 改课程顺序/技能标签，但不大改" }
+      ],
+      "scoring": {
+        "options": {
+          "customize": { "execution": 5 },
+          "haitou": { "execution": 12 },
+          "match_jd": { "execution": 20 }
+        }
+      },
+      "commentaryHints": "朋友原话：海投即可，招聘和申研不一样。一份简历适用所有公司（同岗位）。但按 JD 微调课程/技能是必要的。"
+    },
+    {
+      "id": "scn_company_type_3way",
+      "gate": "fit",
+      "title": "你同时拿到：中国电信 15W（有北京户口）、字节跳动 40W（无户口）、爱立信 25W（WLB 好）。怎么选？",
+      "type": "single",
+      "options": [
+        { "id": "soe", "label": "中国电信——户口和稳定优先" },
+        { "id": "internet", "label": "字节——现金最大化" },
+        { "id": "foreign", "label": "爱立信——WLB 和履历" },
+        { "id": "internet_then_jump", "label": "字节攒 3 年再跳" }
+      ],
+      "scoring": {
+        "options": {
+          "soe": { "fit": 18, "clarity": 10 },
+          "internet": { "fit": 18, "clarity": 10 },
+          "foreign": { "fit": 18, "clarity": 10 },
+          "internet_then_jump": { "fit": 12, "clarity": 18, "execution": 8 }
+        }
+      },
+      "commentaryHints": "没有对错。朋友会看 fit 维度的 priority 排序：钱第一选字节，户口第一选电信，WLB 第一选爱立信。internet_then_jump 显示路径思考更长。"
+    },
+    {
+      "id": "scn_project_storytelling",
+      "gate": "experience",
+      "title": "面试官问：「这段项目你再做一次会做什么改变？」你怎么答？",
+      "context": "这段项目你做了 3 个月，结果还行但有一些坑没填。",
+      "type": "single",
+      "options": [
+        { "id": "perfect", "label": "其实做得挺好，没什么要改的" },
+        { "id": "honest_with_plan", "label": "诚实指出 2 个具体改进点和原因" },
+        { "id": "generic", "label": "说会更注重沟通和协作" }
+      ],
+      "scoring": {
+        "options": {
+          "perfect": { "experience": 4 },
+          "honest_with_plan": { "experience": 22, "execution": 8 },
+          "generic": { "experience": 8 }
+        }
+      },
+      "commentaryHints": "honest_with_plan 是唯一加分项。朋友：paper 不重要，重要是产出+怎么把故事讲好。"
+    },
+    {
+      "id": "scn_management_trainee_warning",
+      "gate": "clarity",
+      "title": "某新势力车企开管培生 offer 给你，起薪 12W 比研发岗低，但承诺 3 年内晋升经理。",
+      "type": "single",
+      "options": [
+        { "id": "accept", "label": "接，晋升机会重要" },
+        { "id": "investigate", "label": "先查这个管培项目过往学员去向再决定" },
+        { "id": "decline", "label": "不接，起薪太低且可能被派去销售" }
+      ],
+      "scoring": {
+        "options": {
+          "accept": { "clarity": 6, "execution": 8 },
+          "investigate": { "clarity": 22, "execution": 16 },
+          "decline": { "clarity": 12, "fit": 8 }
+        }
+      },
+      "commentaryHints": "investigate 最对。朋友警告：管培生可能被派去销售，一定提前调研项目质量。"
+    },
+    {
+      "id": "scn_internship_quality_vs_brand",
+      "gate": "experience",
+      "title": "研一找实习，你拿到：大厂打杂（华为某非核心组 8 周）vs 小厂垂直项目（具身智能创业公司 12 周做完整 Demo）。",
+      "type": "single",
+      "options": [
+        { "id": "brand", "label": "大厂打杂，名气更重要" },
+        { "id": "depth", "label": "小厂垂直项目，工作内容更重要" },
+        { "id": "split", "label": "先大厂 8 周再小厂 4 周" }
+      ],
+      "scoring": {
+        "options": {
+          "brand": { "experience": 8 },
+          "depth": { "experience": 22, "clarity": 10 },
+          "split": { "experience": 14 }
+        }
+      },
+      "commentaryHints": "朋友原话：工作内容 >> 公司名气。宁愿名声小，要确保工作内容对口、有深度。"
+    },
+    {
+      "id": "scn_paper_authorship",
+      "gate": "experience",
+      "title": "你在课题组做了 8 个月，老师让你挂二作发一篇会议论文。",
+      "type": "single",
+      "options": [
+        { "id": "second_author", "label": "挂二作，至少有 paper" },
+        { "id": "ask_first", "label": "争取一作（解释自己的具体贡献）" },
+        { "id": "drop_paper", "label": "不要 paper，全力做项目产出" }
+      ],
+      "scoring": {
+        "options": {
+          "second_author": { "experience": 10 },
+          "ask_first": { "experience": 22, "execution": 8 },
+          "drop_paper": { "experience": 14, "clarity": 6 }
+        }
+      },
+      "commentaryHints": "申研一作加分明显；求职 paper 不重要但产出重要。要看学生申研 vs 求职的路径偏好。"
+    },
+    {
+      "id": "scn_phd_or_not",
+      "gate": "clarity",
+      "title": "你想当高校老师，听说现在双一流入职要 3 篇一区起，副教授要 5 篇一区+青基。",
+      "type": "single",
+      "options": [
+        { "id": "phd_top", "label": "去顶级高校读博、卷科研" },
+        { "id": "phd_normal", "label": "去普通高校读博后躺平当老师" },
+        { "id": "industry", "label": "直接进企业，5 年后看情况" },
+        { "id": "uni_admin", "label": "瞄准高校职能岗（教务/科研院/辅导员），党员身份+硕士足够" }
+      ],
+      "scoring": {
+        "options": {
+          "phd_top": { "clarity": 12, "academic": 10 },
+          "phd_normal": { "clarity": 8, "fit": 12 },
+          "industry": { "clarity": 18, "fit": 10 },
+          "uni_admin": { "clarity": 20, "fit": 14 }
+        }
+      },
+      "commentaryHints": "uni_admin 是朋友给「想稳定但畏惧科研压力」的隐藏选项。"
+    },
+    {
+      "id": "scn_referral_awareness",
+      "gate": "execution",
+      "title": "你打算投半导体公司，目前在用哪些渠道找信息和内推？",
+      "type": "multi",
+      "options": [
+        { "id": "official", "label": "官网直投（只看公司招聘页）" },
+        { "id": "xhs", "label": "小红书搜内推码/面经" },
+        { "id": "niuke", "label": "牛客网看面经/刷题" },
+        { "id": "maimai", "label": "脉脉找内部人员" },
+        { "id": "alumni", "label": "校友群/校友直接推荐" },
+        { "id": "ic_pubs", "label": "IC 加油站/IC 探索者等行业公众号" },
+        { "id": "none", "label": "还没开始主动找，啥渠道都没用过" }
+      ],
+      "scoring": {
+        "options": {
+          "official": { "execution": 4 },
+          "xhs": { "execution": 6 },
+          "niuke": { "execution": 6 },
+          "maimai": { "execution": 6 },
+          "alumni": { "execution": 8 },
+          "ic_pubs": { "execution": 8 },
+          "none": { "execution": 0 }
+        }
+      },
+      "commentaryHints": "选 4+ 项说明渠道意识强；只选 none/official 要重点补。朋友原话：投半导体优先找内推、内推、内推。"
+    },
+    {
+      "id": "scn_timeline_awareness",
+      "gate": "execution",
+      "title": "你计划 27 Fall 入学，现在是大三下学期。秋招/春招/提前批，你最先要准备的是？",
+      "type": "single",
+      "options": [
+        { "id": "next_year_autumn", "label": "明年秋招最重要" },
+        { "id": "summer_intern", "label": "今年暑期实习" },
+        { "id": "spring_pre", "label": "今年提前批 (6 月)" },
+        { "id": "no_idea", "label": "我不清楚这些节点的差别" }
+      ],
+      "scoring": {
+        "options": {
+          "next_year_autumn": { "execution": 8 },
+          "summer_intern": { "execution": 20, "experience": 8 },
+          "spring_pre": { "execution": 12 },
+          "no_idea": { "execution": 2 }
+        }
+      },
+      "commentaryHints": "summer_intern 是对的——大三暑期实习是研究生申请和秋招的双重铺垫。"
+    },
+    {
+      "id": "scn_resume_state",
+      "gate": "execution",
+      "title": "你现在的简历状态？",
+      "type": "multi",
+      "options": [
+        { "id": "cn_only", "label": "只有中文" },
+        { "id": "en_polished", "label": "中英文各一页且已打磨" },
+        { "id": "quantified", "label": "项目结果都有量化（精度/效率提升 X%）" },
+        { "id": "skill_first", "label": "技能简介前置单列一栏" },
+        { "id": "jd_variants", "label": "已按目标 JD 准备 2 个版本" },
+        { "id": "draft_only", "label": "还在初稿，没改完" }
+      ],
+      "scoring": {
+        "options": {
+          "cn_only": { "execution": 2 },
+          "en_polished": { "execution": 10 },
+          "quantified": { "execution": 10 },
+          "skill_first": { "execution": 8 },
+          "jd_variants": { "execution": 8 },
+          "draft_only": { "execution": 1 }
+        }
+      }
+    },
+    {
+      "id": "scn_avoid_first",
+      "gate": "clarity",
+      "title": "反向选法：以下行业/岗位你一定不会去的是？（多选）",
+      "type": "multi",
+      "options": [
+        { "id": "real_estate", "label": "房地产" },
+        { "id": "education", "label": "教培" },
+        { "id": "process", "label": "工艺工程师（驻厂）" },
+        { "id": "scm", "label": "供应链管理" },
+        { "id": "equipment", "label": "设备工程师" },
+        { "id": "sales", "label": "销售工程师" },
+        { "id": "soe_remote", "label": "国央企但要在小城市" },
+        { "id": "996", "label": "996 互联网" },
+        { "id": "none", "label": "都还能接受" }
+      ],
+      "scoring": {
+        "options": {
+          "real_estate": { "clarity": 4 },
+          "education": { "clarity": 4 },
+          "process": { "clarity": 6 },
+          "scm": { "clarity": 4 },
+          "equipment": { "clarity": 4 },
+          "sales": { "clarity": 4 },
+          "soe_remote": { "clarity": 4 },
+          "996": { "clarity": 4 },
+          "none": { "clarity": 0 }
+        }
+      },
+      "commentaryHints": "选越多说明路径越清晰。选 none 要追问——可能是真的开放，也可能是没想过。"
+    }
+  ]
+}

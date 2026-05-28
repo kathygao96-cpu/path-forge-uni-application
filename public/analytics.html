@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>数据看板 | WayTo</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="nav">
+        <div class="brand">
+          <span style="width:10px;height:10px;border-radius:999px;background:var(--accent2)"></span>
+          <span>WayTo 数据看板</span>
+          <span class="badge">本地埋点 · 漏斗</span>
+        </div>
+        <div class="row noPrint" style="margin:0">
+          <a class="btn" href="/admin.html">返回后台</a>
+          <a class="btn" href="/">首页</a>
+        </div>
+      </div>
+
+      <div class="cards" style="margin-top:14px">
+        <div class="card">
+          <h3>输入后台密码</h3>
+          <p>用于读取统计数据（`/api/admin/stats`）。</p>
+          <div class="row noPrint">
+            <input id="pw" placeholder="ADMIN_PASSWORD" style="flex:1;min-width:220px;padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text)" />
+            <button class="btn primary" id="loadBtn">加载</button>
+          </div>
+          <div class="hint" id="hint"></div>
+        </div>
+        <div class="card">
+          <h3>总量</h3>
+          <p class="muted">线索、测评、埋点事件。</p>
+          <div class="toast" id="totals" style="margin-top:12px">—</div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h2>漏斗</h2>
+        <p class="muted" style="margin-top:8px">landing → start → submit → completed → report_view</p>
+        <div class="list" id="funnel"></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h2>LLM 调用统计</h2>
+        <p class="muted" style="margin-top:8px">Anthropic API 用量与缓存命中（cache_read 越高越省钱）。</p>
+        <div class="list" id="llmStats"></div>
+      </div>
+
+      <div class="panel" style="margin-top:14px">
+        <h2>事件计数</h2>
+        <textarea id="raw" spellcheck="false" style="width:100%;height:360px;margin-top:12px;padding:12px;border-radius:16px;border:1px solid var(--border);background:rgba(0,0,0,.22);color:rgba(231,238,252,.92);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;line-height:1.5"></textarea>
+      </div>
+    </div>
+    <script src="/app.js"></script>
+    <script>
+      async function loadStats(pw) {
+        const res = await fetch(`/api/admin/stats?password=${encodeURIComponent(pw)}`);
+        const json = await res.json();
+        if (!res.ok) throw new Error(json?.error || "HTTP_ERROR");
+        return json;
+      }
+
+      function funnelRow(label, value, extra) {
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `<h4>${escapeHtml(label)}</h4><div class="sub">${escapeHtml(value)}${extra ? ` · ${escapeHtml(extra)}` : ""}</div>`;
+        return el;
+      }
+
+      qs("#loadBtn").onclick = async () => {
+        const pw = qs("#pw").value.trim();
+        if (!pw) return (qs("#hint").textContent = "请输入密码。");
+        qs("#hint").textContent = "加载中…";
+        try {
+          const st = await loadStats(pw);
+          qs("#totals").textContent = `leads ${st.totals.leads} · assessments ${st.totals.assessments} · events ${st.totals.events}`;
+
+          const funnel = qs("#funnel");
+          funnel.innerHTML = "";
+          funnel.appendChild(funnelRow("Landing", st.funnel.landing, `start率 ${st.funnel.startRate}%`));
+          funnel.appendChild(funnelRow("Start", st.funnel.started, `submit率 ${st.funnel.submitRate}%`));
+          funnel.appendChild(funnelRow("Submit点击", st.funnel.submitted, `完成率 ${st.funnel.completeRate}%`));
+          funnel.appendChild(funnelRow("Completed", st.funnel.completed, null));
+          funnel.appendChild(funnelRow("Report view", st.funnel.reportViews, null));
+
+          qs("#raw").value = JSON.stringify(st.events, null, 2);
+
+          const llmEl = qs("#llmStats");
+          llmEl.innerHTML = "";
+          const llm = st.llm || {};
+          llmEl.appendChild(funnelRow("API 可用", llm.available ? "✅ 已配置" : "❌ 未配置 secret.json / ANTHROPIC_API_KEY", null));
+          llmEl.appendChild(funnelRow("调用次数", `${llm.called || 0} 次（跳过 ${llm.skipped || 0} 次）`, null));
+          if (llm.tokens) {
+            const t = llm.tokens;
+            const total = (t.in || 0) + (t.out || 0);
+            const cacheRate = (t.in || 0) > 0 ? Math.round(((t.cacheRead || 0) / (t.in || 1)) * 100) : 0;
+            llmEl.appendChild(funnelRow("输入 tokens", `${t.in} (cache_read ${t.cacheRead}, cache_create ${t.cacheCreate})`, `命中率 ${cacheRate}%`));
+            llmEl.appendChild(funnelRow("输出 tokens", `${t.out}`, `总 ${total}`));
+          }
+          qs("#hint").textContent = "已加载。";
+          track("analytics_view");
+        } catch (e) {
+          qs("#hint").textContent = `加载失败：${e.message}`;
+        }
+      };
+    </script>
+  </body>
+</html>
+
