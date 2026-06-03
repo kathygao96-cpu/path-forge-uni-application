@@ -9,3 +9,8 @@ forgepath1.pem
 checkpoints/
 deploy-setup.sh
 test-kimi.js
+*.zip
+-H
+-d
+.claude/
+*.docx
