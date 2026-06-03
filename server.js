@@ -614,51 +614,66 @@ function fallbackTimeline({ profile }) {
 
   // 入学年份
   const entryYear = season === "26fall" ? 2026 : season === "27fall" ? 2027 : season === "28fall" ? 2028 : 2027;
-  const applyYear = entryYear - 1; // 申请季在前一年秋季
+  const applyYear = entryYear - 1;
 
-  // 根据 stage 生成个性化时间线
+  // 大一：什么都不该申
   if (stage === "freshman") {
-    // 大一
-    if (season === "26fall" || season === "27fall") {
-      phases.push({ phase: `现在 ~ ${nowYear}/12`, tasks: ["时间极其紧张，优先保证 GPA 不掉队", "寒暑假必须做项目/实习，不能空档"], milestone: "大二上完成第一段经历" });
-      phases.push({ phase: `${applyYear}/01 ~ ${applyYear}/06`, tasks: ["语言考试必须出分", "确定推荐人并提前沟通"], milestone: "标化成绩到位" });
-      phases.push({ phase: `${applyYear}/09 ~ ${applyYear}/12`, tasks: ["集中写文书", "赶 Round 1 投递"], milestone: "递交申请" });
+    if (season === "26fall" || season === "27fall" || season === "28fall") {
+      phases.push({ phase: "⚠️ 时间线错误", tasks: ["你才大一，不要现在就定申请季", "先把 GPA 刷高，把基础课学好"], milestone: "大二暑假再考虑申请的事" });
+      phases.push({ phase: `${nowYear}/09 ~ ${nowYear + 1}/08`, tasks: ["保持高 GPA", "探索感兴趣的方向", "大一暑假：第一段实习/科研"], milestone: "大二结束：2-3 段经历" });
+      phases.push({ phase: `${nowYear + 2}/09 ~ ${nowYear + 2}/12`, tasks: ["推荐信", "文书", "投递"], milestone: "正常大四申请季" });
+      phases.push({ phase: `${nowYear + 3}/09`, tasks: ["入学准备"], milestone: `${nowYear + 3} Fall 入学` });
     } else {
-      // 28fall 或更远
       phases.push({ phase: `现在 ~ ${nowYear}/08`, tasks: ["保持高 GPA", "探索感兴趣的方向"], milestone: "大一暑假：第一段实习/科研" });
       phases.push({ phase: `${nowYear}/09 ~ ${nowYear + 1}/08`, tasks: ["大二核心课 + 深度项目", "争取暑期科研/实习"], milestone: "大二结束：2-3 段经历" });
-      phases.push({ phase: `${applyYear}/01 ~ ${applyYear}/06`, tasks: ["语言考试", "确定推荐人"], milestone: "标化成绩到位" });
-      phases.push({ phase: `${applyYear}/09 ~ ${applyYear}/12`, tasks: ["文书 + 投递"], milestone: `递交 ${entryYear} Fall 申请` });
+      phases.push({ phase: `${nowYear + 2}/09 ~ ${nowYear + 2}/12`, tasks: ["推荐信", "文书", "投递"], milestone: "正常大四申请季" });
+      phases.push({ phase: `${nowYear + 3}/09`, tasks: ["入学准备"], milestone: `${nowYear + 3} Fall 入学` });
     }
-  } else if (stage === "sophomore") {
-    // 大二
-    if (season === "26fall") {
-      phases.push({ phase: `现在 ~ ${nowYear}/08`, tasks: ["极限补背景：语言+实习+项目三管齐下", "如果 GPA 有短板优先重修/刷分"], milestone: "暑期实习/科研到岗" });
-      phases.push({ phase: `${nowYear}/09 ~ ${nowYear}/12`, tasks: ["文书速成", "推荐信紧急联系教授"], milestone: `赶 ${nowYear} 年末轮次投递` });
-      phases.push({ phase: `${entryYear}/01 ~ ${entryYear}/04`, tasks: ["等 offer / 补申"], milestone: `${entryYear} Fall 入学` });
+    return phases;
+  }
+
+  // 大二：只该申 28fall
+  if (stage === "sophomore") {
+    if (season === "26fall" || season === "27fall") {
+      phases.push({ phase: "⚠️ 时间线错误", tasks: ["你才大二，27 Fall 是给自己挖坑", "正常节奏是大四申 28 Fall"], milestone: "把申请季改到 28 Fall" });
+      phases.push({ phase: `现在 ~ ${nowYear}/08`, tasks: ["稳住 GPA", "确定申请方向", "找暑期实习/科研"], milestone: "大二暑假核心经历" });
+      phases.push({ phase: `${nowYear}/09 ~ ${nowYear + 1}/06`, tasks: ["大三上：核心课+项目", "大三下：语言出分+推荐人"], milestone: "申请季前准备完成" });
+      phases.push({ phase: `${nowYear + 1}/09 ~ ${nowYear + 1}/12`, tasks: ["文书 + 投递"], milestone: `递交 ${nowYear + 2} Fall 申请` });
+      phases.push({ phase: `${nowYear + 2}/09`, tasks: ["入学准备"], milestone: `${nowYear + 2} Fall 入学` });
     } else {
       phases.push({ phase: `现在 ~ ${nowYear}/08`, tasks: ["稳住 GPA", "确定申请方向", "找暑期实习/科研"], milestone: "大二暑假核心经历" });
-      phases.push({ phase: `${nowYear}/09 ~ ${applyYear}/06`, tasks: ["大三上：核心课+项目", "大三下：语言出分+推荐人"], milestone: "申请季前准备完成" });
-      phases.push({ phase: `${applyYear}/09 ~ ${applyYear}/12`, tasks: ["文书 + 投递"], milestone: `递交 ${entryYear} Fall 申请` });
+      phases.push({ phase: `${nowYear}/09 ~ ${nowYear + 1}/06`, tasks: ["大三上：核心课+项目", "大三下：语言出分+推荐人"], milestone: "申请季前准备完成" });
+      phases.push({ phase: `${nowYear + 1}/09 ~ ${nowYear + 1}/12`, tasks: ["文书 + 投递"], milestone: `递交 ${entryYear} Fall 申请` });
+      phases.push({ phase: `${entryYear}/09`, tasks: ["入学准备"], milestone: `${entryYear} Fall 入学` });
     }
-  } else if (stage === "junior") {
-    // 大三
+    return phases;
+  }
+
+  // 大三：正常申 27fall
+  if (stage === "junior") {
     if (season === "26fall") {
-      phases.push({ phase: `现在 ~ ${nowYear}/08`, tasks: ["最后冲刺：文书/语言/推荐信"], milestone: `赶 ${nowYear} Fall 末班车` });
-      phases.push({ phase: `${entryYear}/01+`, tasks: ["等结果/补申"], milestone: `${entryYear} Fall 入学` });
+      phases.push({ phase: "⚠️ 时间线错误", tasks: ["你才大三，26 Fall 已经结束了", "改申 27 Fall 或 28 Fall"], milestone: "重新选择申请季" });
+      phases.push({ phase: `现在 ~ ${nowYear}/08`, tasks: ["暑假实习/科研", "语言出分"], milestone: "大三暑假核心产出" });
+      phases.push({ phase: `${nowYear}/09 ~ ${nowYear}/12`, tasks: ["推荐信", "文书", "投递"], milestone: `递交 27 Fall 申请` });
+      phases.push({ phase: `${nowYear + 1}/09`, tasks: ["入学准备"], milestone: `27 Fall 入学` });
     } else if (season === "27fall") {
       phases.push({ phase: `现在 ~ ${nowYear}/08`, tasks: ["暑假实习/科研", "语言出分"], milestone: "大三暑假核心产出" });
       phases.push({ phase: `${nowYear}/09 ~ ${nowYear}/12`, tasks: ["推荐信", "文书打磨", "Round 1 投递"], milestone: `递交 ${entryYear} Fall 申请` });
       phases.push({ phase: `${entryYear}/01 ~ ${entryYear}/04`, tasks: ["面试", "选校", "等 offer"], milestone: `${entryYear} Fall 确定去向` });
+      phases.push({ phase: `${entryYear}/09`, tasks: ["入学准备"], milestone: `${entryYear} Fall 入学` });
     } else {
-      // 28fall
-      phases.push({ phase: `现在 ~ ${nowYear + 1}/08`, tasks: ["大三核心经历", "大四继续补背景", "Gap 年做全职实习/科研"], milestone: "Gap 年高产出" });
+      phases.push({ phase: `现在 ~ ${nowYear + 1}/08`, tasks: ["大四核心经历", "Gap 年做全职实习/科研"], milestone: "Gap 年高产出" });
       phases.push({ phase: `${applyYear}/09 ~ ${applyYear}/12`, tasks: ["文书 + 投递"], milestone: `递交 ${entryYear} Fall 申请` });
+      phases.push({ phase: `${entryYear}/09`, tasks: ["入学准备"], milestone: `${entryYear} Fall 入学` });
     }
-  } else if (stage === "senior") {
-    // 大四
+    return phases;
+  }
+
+  // 大四
+  if (stage === "senior") {
     if (season === "26fall") {
       phases.push({ phase: `现在 ~ ${nowYear}/08`, tasks: ["毕业设计/论文", "入学准备"], milestone: `已拿 offer：准备入学` });
+      phases.push({ phase: `${entryYear}/09`, tasks: ["入学准备"], milestone: `${entryYear} Fall 入学` });
     } else if (season === "27fall") {
       phases.push({ phase: `现在 ~ ${nowYear}/06`, tasks: ["毕业答辩", "确定推荐信"], milestone: "本科毕业" });
       phases.push({ phase: `${nowYear}/07 ~ ${nowYear}/12`, tasks: ["全职实习/科研", "文书", "语言（如需要）"], milestone: `递交 ${entryYear} Fall 申请` });
@@ -666,22 +681,25 @@ function fallbackTimeline({ profile }) {
     } else {
       phases.push({ phase: `现在 ~ ${applyYear}/06`, tasks: ["毕业", "Gap 年全职经历"], milestone: "积累硬核经历" });
       phases.push({ phase: `${applyYear}/09 ~ ${applyYear}/12`, tasks: ["文书 + 投递"], milestone: `递交 ${entryYear} Fall 申请` });
+      phases.push({ phase: `${entryYear}/09`, tasks: ["入学准备"], milestone: `${entryYear} Fall 入学` });
     }
-  } else if (stage === "gap" || stage === "working") {
-    // 已毕业/工作中
-    phases.push({ phase: `现在 ~ ${applyYear}/06`, tasks: ["继续积累工作经历", "语言出分（如需要）"], milestone: "申请季前准备" });
-    phases.push({ phase: `${applyYear}/07 ~ ${applyYear}/12`, tasks: ["文书 + 推荐信", "投递"], milestone: `递交 ${entryYear} Fall 申请` });
-    phases.push({ phase: `${entryYear}/01+`, tasks: ["面试", "选 offer"], milestone: `${entryYear} Fall 入学` });
-  } else if (stage === "master_in") {
-    // 研究生在读
-    phases.push({ phase: `现在 ~ ${applyYear}/06`, tasks: ["科研/论文产出", "确定二硕/博士方向"], milestone: "申请季前准备" });
-    phases.push({ phase: `${applyYear}/09 ~ ${applyYear}/12`, tasks: ["文书 + 推荐信", "投递"], milestone: `递交 ${entryYear} Fall 申请` });
-    phases.push({ phase: `${entryYear}/01+`, tasks: ["面试", "选 offer"], milestone: `${entryYear} Fall 入学` });
+    return phases;
   }
 
-  // 统一加上入学节点
-  if (phases.length > 0 && !phases[phases.length - 1].phase.includes(String(entryYear) + "/09")) {
-    phases.push({ phase: `${entryYear}/09`, tasks: ["入学准备", "签证/住宿"], milestone: `${entryYear} Fall 入学` });
+  // 已毕业/工作中
+  if (stage === "gap" || stage === "working") {
+    phases.push({ phase: `现在 ~ ${applyYear}/06`, tasks: ["继续积累工作经历", "语言出分（如需要）"], milestone: "申请季前准备" });
+    phases.push({ phase: `${applyYear}/07 ~ ${applyYear}/12`, tasks: ["文书 + 推荐信", "投递"], milestone: `递交 ${entryYear} Fall 申请` });
+    phases.push({ phase: `${entryYear}/01 ~ ${entryYear}/04`, tasks: ["面试", "选 offer"], milestone: `${entryYear} Fall 入学` });
+    return phases;
+  }
+
+  // 研究生在读
+  if (stage === "master_in") {
+    phases.push({ phase: `现在 ~ ${applyYear}/06`, tasks: ["科研/论文产出", "确定二硕/博士方向"], milestone: "申请季前准备" });
+    phases.push({ phase: `${applyYear}/09 ~ ${applyYear}/12`, tasks: ["文书 + 推荐信", "投递"], milestone: `递交 ${entryYear} Fall 申请` });
+    phases.push({ phase: `${entryYear}/01 ~ ${entryYear}/04`, tasks: ["面试", "选 offer"], milestone: `${entryYear} Fall 入学` });
+    return phases;
   }
 
   return phases;
