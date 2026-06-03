@@ -10,6 +10,17 @@ const sqlite = require("./sqlite.js");
 sqlite.init();
 sqlite.migrateFromJson();
 
+// 确保默认运营邀请码存在
+(() => {
+  try {
+    const ic = sqlite.getInviteCode("AOTA001");
+    if (!ic) {
+      sqlite.createInviteCode({ code: "AOTA001", maxUses: 0, status: "active", label: "运营邀请码", createdAt: Date.now() });
+      console.log("[init] created default invite code AOTA001");
+    }
+  } catch (e) { /* ignore */ }
+})();
+
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8787;
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, "public");
