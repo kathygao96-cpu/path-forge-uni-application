@@ -60,7 +60,9 @@
 
       .timelineCard { padding:12px 14px; border-radius:4px; border:1px solid var(--border);
         background:rgba(255,255,255,.02); margin-bottom:8px; position:relative; padding-left:80px; }
+      .timelineCard.error { border-color:rgba(168,50,50,.6); background:linear-gradient(180deg, rgba(168,50,50,.08), rgba(168,50,50,.02)); }
       .timelineCard .phase { position:absolute; left:14px; top:14px; font-size:11px; font-weight:800; color:var(--accent2); width:56px; font-family: var(--font-display); }
+      .timelineCard.error .phase { color:#c44; }
       .timelineCard .milestone { font-weight:700; font-size:14px; margin-bottom:6px; color:var(--text); }
       .timelineCard ul { margin:0; padding-left:18px; font-size:12.5px; color:rgba(232,221,208,.85); }
 
@@ -270,7 +272,8 @@
         clearAll(timelineEl);
         for (const p of (r.timeline || [])) {
           const card = document.createElement("div");
-          card.className = "timelineCard";
+          const isError = (p.phase || "").includes("⚠️");
+          card.className = isError ? "timelineCard error" : "timelineCard";
           const tasks = (p.tasks || []).map(t => `<li>${escapeHtml(t)}</li>`).join("");
           card.innerHTML = `<div class="phase">${escapeHtml(p.phase || "")}</div>
             <div class="milestone">🎯 ${escapeHtml(p.milestone || "")}</div>
