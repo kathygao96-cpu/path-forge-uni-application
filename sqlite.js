@@ -52,10 +52,9 @@ function init() {
       createdAt TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_invite_owner ON invite_codes(ownerLeadId);
-
-    -- 迁移：leads 表加 invitedBy 字段
-    try { db.exec("ALTER TABLE leads ADD COLUMN invitedBy TEXT"); } catch {}
   `);
+  // 迁移：leads 表加 invitedBy 字段
+  try { db.exec("ALTER TABLE leads ADD COLUMN invitedBy TEXT"); } catch {}
   return db;
 }
 

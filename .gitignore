@@ -5,3 +5,4 @@ data/secret.json
 *.log
 .DS_Store
 
+forgepath1.pem

@@ -87,13 +87,17 @@
             "type": "single",
             "required": true,
             "options": [
-              { "id": "cs_ai", "label": "计算机 / AI / 数据科学" },
-              { "id": "ee_comm", "label": "电子 / 通信 / 微电子" },
-              { "id": "me_auto", "label": "机械 / 自动化" },
-              { "id": "mat_chem", "label": "材料 / 化工 / 能源" },
+              { "id": "cs", "label": "计算机科学" },
+              { "id": "ai_ds", "label": "AI / 数据科学" },
+              { "id": "ee", "label": "电子工程" },
+              { "id": "telecom", "label": "通信工程" },
+              { "id": "microe", "label": "微电子 / 集成电路" },
+              { "id": "me", "label": "机械 / 自动化" },
+              { "id": "materials", "label": "材料科学" },
+              { "id": "chem", "label": "化学 / 化工" },
               { "id": "bio", "label": "生物医药" },
-              { "id": "biz_cross", "label": "商科 / 交叉 / 文科" },
-              { "id": "math_phy", "label": "数学 / 物理 / 统计" },
+              { "id": "business", "label": "商科 / 管理" },
+              { "id": "cross", "label": "交叉学科 / 数学 / 物理 / 统计" },
               { "id": "other", "label": "其他（请具体说明）", "type": "text" }
             ]
           },
@@ -118,6 +122,72 @@
               { "id": "phd", "label": "博士" },
               { "id": "unknown", "label": "不确定" }
             ]
+          }
+        ]
+      },
+      {
+        "id": "rc_target_direction",
+        "title": "目标方向",
+        "intro": "你的目标方向决定了匹配得分的准确性。勾选所有你考虑的方向，导师会据此计算匹配度。",
+        "fields": [
+          {
+            "id": "rc_target_majors",
+            "label": "目标专业（多选）",
+            "type": "multi",
+            "required": false,
+            "options": [
+              { "id": "cs", "label": "计算机科学" },
+              { "id": "ai_ds", "label": "AI / 数据科学" },
+              { "id": "ee", "label": "电子工程" },
+              { "id": "telecom", "label": "通信工程" },
+              { "id": "microe", "label": "微电子 / 集成电路" },
+              { "id": "me", "label": "机械 / 自动化" },
+              { "id": "materials", "label": "材料科学" },
+              { "id": "chem", "label": "化学 / 化工" },
+              { "id": "bio", "label": "生物医药" },
+              { "id": "business", "label": "商科 / 管理" },
+              { "id": "cross", "label": "交叉学科" },
+              { "id": "other", "label": "其他" }
+            ]
+          },
+          {
+            "id": "rc_target_industries",
+            "label": "目标行业（多选）",
+            "type": "multi",
+            "required": false,
+            "optionsRef": "industries.id"
+          },
+          {
+            "id": "rc_target_roles",
+            "label": "目标岗位（多选）",
+            "type": "multi",
+            "required": false,
+            "optionsRef": "roles.id"
+          },
+          {
+            "id": "rc_target_locations",
+            "label": "目标地区（多选）",
+            "type": "multi",
+            "required": false,
+            "options": [
+              { "id": "HK", "label": "🇭🇰 香港" },
+              { "id": "SG", "label": "🇸🇬 新加坡" },
+              { "id": "UK", "label": "🇬🇧 英国" },
+              { "id": "US", "label": "🇺🇸 美国" },
+              { "id": "AU", "label": "🇦🇺 澳洲" },
+              { "id": "EU", "label": "🇪🇺 欧洲（德/荷/北欧等）" },
+              { "id": "CA", "label": "🇨🇦 加拿大" },
+              { "id": "JP", "label": "🇯🇵 日本" },
+              { "id": "mainland", "label": "🇨🇳 中国大陆" },
+              { "id": "other", "label": "其他" }
+            ]
+          },
+          {
+            "id": "rc_target_company_types",
+            "label": "目标公司类型（多选）",
+            "type": "multi",
+            "required": false,
+            "optionsRef": "companyTypes.id"
           }
         ]
       }
@@ -245,7 +315,7 @@
       "scoring": {
         "options": {
           "tech_principle": { "gap": 18 }, "tech_skill_demo": { "gap": 18, "experience": 8 },
-          "industry_landscape": { "gap": 12, "clarity": 8 }, "target_jd": { "gap": 12, "clarity": 12 },
+          "industry_landscape": { "gap": 12, "clarity": 4 }, "target_jd": { "gap": 12, "clarity": 6 },
           "story_arc": { "gap": 16, "execution": 8 }, "none": { "gap": 0 }
         }
       }
@@ -266,7 +336,7 @@
       ],
       "scoring": {
         "options": {
-          "self_study": { "gap": 6, "clarity": 5 },
+          "self_study": { "gap": 6, "clarity": 3 },
           "selective": { "gap": 8 },
           "side_project": { "gap": 14, "experience": 10 },
           "lab": { "gap": 14, "experience": 14 },
@@ -294,8 +364,8 @@
       "scoring": {
         "options": {
           "none": { "experience": 0 }, "course_internship": { "experience": 8 },
-          "one_unrelated": { "experience": 12, "clarity": 4 }, "one_relevant": { "experience": 30, "clarity": 8 },
-          "two_relevant": { "experience": 45, "clarity": 12 },
+          "one_unrelated": { "experience": 12, "clarity": 2 }, "one_relevant": { "experience": 30, "clarity": 4 },
+          "two_relevant": { "experience": 45, "clarity": 6 },
           "top_company": { "experience": 30, "execution": 8 }, "other": { "experience": 20 }
         }
       }
@@ -363,17 +433,19 @@
         { "id": "media", "label": "自媒体（小红书 / B 站 / 知乎等）有粉丝" },
         { "id": "leadership", "label": "学生组织/社团负责人 + 明确成果" },
         { "id": "comp_award", "label": "国际/国家级竞赛获奖" },
-        { "id": "other", "label": "其他（请具体说明）", "type": "text" }
+        { "id": "other", "label": "其他（请具体说明）", "type": "text" },
+        { "id": "none", "label": "都没有 / 跳过" }
       ],
       "scoring": {
         "options": {
           "exchange_camp": { "experience": 8, "execution": 5 },
-          "startup": { "experience": 10, "clarity": 6 },
+          "startup": { "experience": 10, "clarity": 3 },
           "portfolio": { "experience": 10, "execution": 8 },
-          "media": { "execution": 6, "clarity": 4 },
-          "leadership": { "experience": 6, "fit": 4 },
+          "media": { "execution": 6, "clarity": 2 },
+          "leadership": { "experience": 6, "fit": 1 },
           "comp_award": { "experience": 10, "execution": 5 },
-          "other": { "experience": 5 }
+          "other": { "experience": 5 },
+          "none": {}
         }
       }
     },
@@ -390,7 +462,7 @@
       ],
       "scoring": {
         "options": {
-          "no": { "fit": 22 }, "short": { "fit": 20 }, "ok": { "fit": 18 }, "ok_high": { "fit": 16 }
+          "no": { "fit": 8 }, "short": { "fit": 7 }, "ok": { "fit": 6 }, "ok_high": { "fit": 6 }
         }
       },
       "preferenceTag": "shift_work"
@@ -408,7 +480,7 @@
       ],
       "scoring": {
         "options": {
-          "no": { "fit": 20 }, "office_first": { "fit": 18 }, "mixed_ok": { "fit": 16 }, "ok": { "fit": 14 }
+          "no": { "fit": 7 }, "office_first": { "fit": 6 }, "mixed_ok": { "fit": 6 }, "ok": { "fit": 5 }
         }
       },
       "preferenceTag": "onsite"
@@ -426,7 +498,7 @@
       ],
       "scoring": {
         "options": {
-          "no": { "fit": 18 }, "low": { "fit": 16 }, "mid": { "fit": 14 }, "high": { "fit": 12 }
+          "no": { "fit": 6 }, "low": { "fit": 6 }, "mid": { "fit": 5 }, "high": { "fit": 4 }
         }
       },
       "preferenceTag": "travel"
@@ -446,9 +518,9 @@
       ],
       "scoring": {
         "options": {
-          "salary": { "fit": 16, "clarity": 6 }, "wlb": { "fit": 16, "clarity": 6 },
-          "stability": { "fit": 16, "clarity": 6 }, "hukou": { "fit": 16, "clarity": 6 },
-          "platform": { "fit": 16, "clarity": 6 }, "growth": { "fit": 16, "clarity": 6 }
+          "salary": { "fit": 6, "clarity": 6 }, "wlb": { "fit": 6, "clarity": 6 },
+          "stability": { "fit": 6, "clarity": 6 }, "hukou": { "fit": 6, "clarity": 6 },
+          "platform": { "fit": 6, "clarity": 6 }, "growth": { "fit": 6, "clarity": 6 }
         }
       },
       "preferenceTag": "priority"
@@ -466,8 +538,8 @@
       ],
       "scoring": {
         "options": {
-          "introvert_detail": { "fit": 14 }, "introvert_logic": { "fit": 14 },
-          "extrovert_comm": { "fit": 14 }, "balanced": { "fit": 16 }
+          "introvert_detail": { "fit": 5 }, "introvert_logic": { "fit": 5 },
+          "extrovert_comm": { "fit": 5 }, "balanced": { "fit": 6 }
         }
       },
       "preferenceTag": "personality"
@@ -483,11 +555,11 @@
       "dim": "execution",
       "scoring": {
         "stars": {
-          "1": { "execution": 5, "clarity": 2 },
-          "2": { "execution": 12, "clarity": 5 },
-          "3": { "execution": 22, "clarity": 8 },
-          "4": { "execution": 32, "clarity": 12 },
-          "5": { "execution": 40, "clarity": 15 }
+          "1": { "execution": 5, "clarity": 1 },
+          "2": { "execution": 12, "clarity": 3 },
+          "3": { "execution": 22, "clarity": 4 },
+          "4": { "execution": 32, "clarity": 6 },
+          "5": { "execution": 40, "clarity": 8 }
         }
       }
     }

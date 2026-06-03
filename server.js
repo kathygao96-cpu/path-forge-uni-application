@@ -351,6 +351,22 @@ function fallbackMatches({ scores, profile, cfg }) {
   const targetIndustryIds = new Set(profile?.rc_target_industries || []);
   const targetRoleIds = new Set(profile?.rc_target_roles || []);
   const targetCompanyTypeIds = new Set(profile?.rc_target_company_types || []);
+  const userMajor = profile?.rc_major;
+
+  const MAJOR_TO_NAMES = {
+    cs: ["计算机"],
+    ai_ds: ["AI", "数据科学", "计算机"],
+    ee: ["电子电气"],
+    telecom: ["通信"],
+    microe: ["微电子"],
+    me: ["机械"],
+    materials: ["材料"],
+    chem: ["化工"],
+    bio: ["生物医药", "生物"],
+    business: ["商科"],
+    cross: ["数学", "物理", "统计", "交叉学科"],
+  };
+  const majorNames = MAJOR_TO_NAMES[userMajor] || [];
 
   const norm = (v) => (v ?? 0) / 100;
   const user = Object.fromEntries(Object.keys(scores).map((k) => [k, norm(scores[k])]));
@@ -371,8 +387,12 @@ function fallbackMatches({ scores, profile, cfg }) {
       // 线性衰减：完美匹配 1.0，avgDist=0.25 时降到 0.5，avgDist=0.5 时 0
       const base = Math.max(0, Math.min(1, 1 - avgDist * 2));
       let bonus = 0;
-      if (targetIndustryIds.has(ind.id)) bonus += 0.03;
-      if (targetRoleIds.has(role.id)) bonus += 0.03;
+      // 目标方向偏好（学生主动勾选的方向权重更高）
+      if (targetIndustryIds.has(ind.id)) bonus += 0.08;
+      if (targetRoleIds.has(role.id)) bonus += 0.08;
+      // 本科专业与行业/岗位的匹配度
+      if (majorNames.some((n) => (ind.bestFitMajors || []).includes(n))) bonus += 0.05;
+      if (majorNames.some((n) => (role.fitMajors || []).includes(n))) bonus += 0.05;
       const fitScore = Math.max(0, Math.min(1, base + bonus));
       pairs.push({ industry: ind, role, fitScore });
     }
@@ -417,7 +437,7 @@ function fallbackMatches({ scores, profile, cfg }) {
 }
 
 function fallbackPrograms({ scores, profile, cfg }) {
-  const targetRegions = new Set(profile?.rc_target_regions || []);
+  const targetRegions = new Set(profile?.rc_target_locations || []);
   const targetIndustries = new Set(profile?.rc_target_industries || []);
   const targetMajors = new Set(profile?.rc_target_majors || []);
 
@@ -597,9 +617,49 @@ function fallbackTimeline({ profile }) {
   return phases;
 }
 
+function sanitizeString(s) {
+  if (typeof s !== "string") return s;
+  return s.replace(/LinkedIn/gi, "专业社交").replace(/领英/g, "专业社交");
+}
+
+function sanitizeReport(r) {
+  if (!r) return r;
+  const out = JSON.parse(JSON.stringify(r));
+  if (out.title) out.title = sanitizeString(out.title);
+  if (out.summary) out.summary = sanitizeString(out.summary);
+  if (Array.isArray(out.truths)) {
+    for (const t of out.truths) {
+      if (t.text) t.text = sanitizeString(t.text);
+      if (t.why) t.why = sanitizeString(t.why);
+    }
+  }
+  if (Array.isArray(out.matches)) {
+    for (const m of out.matches) {
+      if (m.why) m.why = sanitizeString(m.why);
+    }
+  }
+  if (Array.isArray(out.timeline)) {
+    for (const tl of out.timeline) {
+      if (tl.milestone) tl.milestone = sanitizeString(tl.milestone);
+      if (Array.isArray(tl.tasks)) tl.tasks = tl.tasks.map(sanitizeString);
+    }
+  }
+  if (Array.isArray(out.programs)) {
+    for (const p of out.programs) {
+      if (p.fitTag) p.fitTag = sanitizeString(p.fitTag);
+    }
+  }
+  if (Array.isArray(out.scenarioCommentary)) {
+    for (const s of out.scenarioCommentary) {
+      if (s.comment) s.comment = sanitizeString(s.comment);
+    }
+  }
+  return out;
+}
+
 // ---------------------- 报告生成 ----------------------
 
-async function generateAssessmentReport({ cfg, answers, leadId, itemEffects }) {
+async function generateAssessmentReport({ cfg, answers, leadId }) {
   const { model, questionBank, scenarios } = cfg;
 
   // 1) 本地评分
@@ -608,24 +668,6 @@ async function generateAssessmentReport({ cfg, answers, leadId, itemEffects }) {
   const offer = offerProbability(scores);
   const alchemistType = deriveAlchemistType(scores, model, cfg.archetypes);
   const fallbackTitle = `${alchemistType.name} · ${alchemistType.tagline}`;
-
-  // 1.5) 应用道具效果
-  const appliedItems = [];
-  if (itemEffects) {
-    // 属性石维度加成（加到原始 points 后再归一化）
-    for (const [dim, bonus] of Object.entries(itemEffects.dimBoosts || {})) {
-      if (points[dim] != null && bonus) {
-        points[dim] += bonus;
-        appliedItems.push({ type: "dim", dim, bonus });
-      }
-    }
-    // 重新归一化
-    for (const d of model.dimensions) {
-      const raw = points[d.id] || 0;
-      const max = d.maxPoints || 100;
-      scores[d.id] = Math.max(0, Math.min(100, Math.round((raw / max) * 100)));
-    }
-  }
 
   // 2) 提取 profile / scenarioAnswers
   const profile = {};
@@ -669,7 +711,7 @@ async function generateAssessmentReport({ cfg, answers, leadId, itemEffects }) {
         dataset,
       });
       if (r.report) {
-        llmReport = r.report;
+        llmReport = sanitizeReport(r.report);
         llmTelemetry = r.telemetry;
       } else {
         llmError = r.error || "unknown";
@@ -691,19 +733,8 @@ async function generateAssessmentReport({ cfg, answers, leadId, itemEffects }) {
   const ctSuffix = topCompanyTypeName ? ` × ${topCompanyTypeName}` : "";
   const fallbackSummary = `你的底牌最接近「${topIndustryName} × ${topRoleName}${ctSuffix}」的路径方向。最强的是「${strong?.name || "—"}」，最需要补强的是「${weak?.name || "—"}》。`;
 
-  // 幸运符概率加成
-  let finalOffer = llmReport?.offerProbability ?? offer;
-  if (itemEffects?.offerBoost) {
-    finalOffer = Math.min(99, finalOffer + itemEffects.offerBoost);
-    appliedItems.push({ type: "offer", bonus: itemEffects.offerBoost });
-  }
-
-  // 导师便签额外洞察
-  let finalTruths = llmReport?.truths || truthsFB;
-  if (itemEffects?.extraNotes?.length) {
-    finalTruths = [...itemEffects.extraNotes.map((text) => ({ text, why: "导师便签" })), ...finalTruths];
-    appliedItems.push({ type: "note", count: itemEffects.extraNotes.length });
-  }
+  const finalOffer = llmReport?.offerProbability ?? offer;
+  const finalTruths = llmReport?.truths || truthsFB;
 
   const report = {
     scores,
@@ -721,7 +752,6 @@ async function generateAssessmentReport({ cfg, answers, leadId, itemEffects }) {
     llmGenerated: Boolean(llmReport),
     llmError,
     reasons,
-    itemEffects: appliedItems,
     alchemistType,
   };
 
@@ -888,9 +918,8 @@ const server = http.createServer(async (req, res) => {
 
       const answers = body.answers || {};
       const leadId = body.leadId || null;
-      const itemEffects = body.itemEffects || null;
 
-      const { report, llmTelemetry } = await generateAssessmentReport({ cfg, answers, leadId, itemEffects });
+      const { report, llmTelemetry } = await generateAssessmentReport({ cfg, answers, leadId });
 
       const assessment = {
         id: id("asm"),

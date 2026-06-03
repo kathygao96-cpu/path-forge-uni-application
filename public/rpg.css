@@ -16,6 +16,8 @@ body.rpg-mode .nav {
 }
 
 /* ===== 锻造场景 ===== */
+html { overflow-anchor: none; }
+
 .rpg-scene {
   position: relative;
   border-radius: 4px;

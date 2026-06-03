@@ -229,6 +229,7 @@
     {
       "id": "scn_referral_awareness",
       "gate": "execution",
+      "noHint": true,
       "title": "你打算投半导体公司，目前在用哪些渠道找信息和内推？",
       "type": "multi",
       "options": [
@@ -256,6 +257,7 @@
     {
       "id": "scn_timeline_awareness",
       "gate": "execution",
+      "noHint": true,
       "title": "你计划 27 Fall 入学，现在是大三下学期。秋招/春招/提前批，你最先要准备的是？",
       "type": "single",
       "options": [
@@ -277,6 +279,7 @@
     {
       "id": "scn_resume_state",
       "gate": "execution",
+      "noHint": true,
       "title": "你现在的简历状态？",
       "type": "multi",
       "options": [
@@ -301,6 +304,7 @@
     {
       "id": "scn_avoid_first",
       "gate": "clarity",
+      "noHint": true,
       "title": "反向选法：以下行业/岗位你一定不会去的是？（多选）",
       "type": "multi",
       "options": [

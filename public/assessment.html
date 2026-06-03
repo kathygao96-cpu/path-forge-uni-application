@@ -26,12 +26,7 @@
           <div class="rpg-hud-chapter" id="hudChapter">信息登记</div>
           <div class="rpg-hud-stats">
             <span class="rpg-stat" id="hudStep">— / —</span>
-            <span class="rpg-stat accent" id="hudXp">SCORE 0</span>
             <span class="rpg-stat gold" id="hudPhase">登记</span>
-            <span class="rpg-inventory-btn" id="invBtn" title="背包">
-              🎒
-              <span class="rpg-inventory-badge rpg-hidden" id="invBadge">0</span>
-            </span>
           </div>
         </div>
         <div class="rpg-chapters" id="chapterBar"></div>
@@ -97,24 +92,6 @@
         crystal: "⚪",
       };
 
-      const DROP_TABLE = [
-        { id: "xp_scroll", name: "经验卷轴", emoji: "📜", rarity: "common", chance: 0.50, effect: { xp: [5, 15] }, msg: "掉落经验卷轴！" },
-        { id: "attr_stone", name: "属性石", emoji: "💎", rarity: "rare", chance: 0.30, effect: { dimBonus: [3, 8] }, msg: "掉落属性石！" },
-        { id: "mentor_note", name: "导师便签", emoji: "📝", rarity: "epic", chance: 0.15, effect: { note: true }, msg: "导师留下了一张便签！" },
-        { id: "lucky_charm", name: "幸运符", emoji: "🍀", rarity: "legendary", chance: 0.05, effect: { offerProb: [2, 5] }, msg: "传说级掉落——幸运符！" },
-      ];
-
-      const CARD_POOL = [
-        { id: "xp_boost", name: "经验加成", emoji: "⚡", rarity: "common", desc: "+15 XP", effect: { xp: 15 } },
-        { id: "academic_stone", name: "学业石", emoji: "📚", rarity: "rare", desc: "学业底牌 +5", effect: { dim: "academic", bonus: 5 } },
-        { id: "gap_filler", name: "跨度补剂", emoji: "🧪", rarity: "rare", desc: "跨界难度 -5", effect: { dim: "gap", bonus: 5 } },
-        { id: "clarity_lens", name: "清晰透镜", emoji: "🔮", rarity: "epic", desc: "方向清晰 +8", effect: { dim: "clarity", bonus: 8 } },
-        { id: "exec_potion", name: "执行药水", emoji: "⚗️", rarity: "epic", desc: "执行韧性 +8", effect: { dim: "execution", bonus: 8 } },
-        { id: "fortune_star", name: "命运之星", emoji: "⭐", rarity: "legendary", desc: "全属性 +3, +25 XP", effect: { allDim: 3, xp: 25 } },
-      ];
-
-      const RARITY_NAMES = { common: "普通", rare: "稀有", epic: "史诗", legendary: "传说" };
-      const RARITY_COLORS = { common: "rgba(200,200,200,.7)", rare: "#8ab4f8", epic: "#c58af9", legendary: "#f0c878" };
 
       const state = {
         cfg: null,
@@ -128,10 +105,6 @@
         answers: {},
         xp: 0,
         typing: false,
-        inventory: [],
-        buffs: [],
-        dropsEnabled: true,
-        usedItems: [],
       };
 
       function clearChildren(el) { while (el.firstChild) el.removeChild(el.firstChild); }
@@ -153,7 +126,6 @@
           qs("#hudChapter").textContent = "终章 · 定稿输出";
           qs("#hudStep").textContent = "联系方式";
         }
-        qs("#hudXp").textContent = `SCORE ${state.xp}`;
       }
 
       const PHASE_MAP = [
@@ -199,6 +171,40 @@
             bar.appendChild(line);
           }
         });
+      }
+
+      /* ===== 强制回到顶部（防锚点回弹） ===== */
+      function forceScrollTop() {
+        if (document.activeElement && document.activeElement !== document.body) {
+          document.activeElement.blur();
+        }
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        if (window.pageYOffset !== 0) {
+          requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+          });
+        }
+      }
+
+      /* ===== 情境特效 ===== */
+      function triggerScreenFlash() {
+        const el = document.createElement("div");
+        el.className = "rpg-screen-flash";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 700);
+      }
+      function triggerEventBanner(text) {
+        const el = document.createElement("div");
+        el.className = "rpg-event-banner";
+        el.textContent = text;
+        const scene = qs("#rpgScene");
+        if (scene) scene.appendChild(el);
+        else document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1500);
       }
 
       /* ===== 反馈气泡 ===== */
@@ -264,320 +270,16 @@
         return bestOpt;
       }
 
-      function getUnusedItemIndex(itemId) {
-        return state.inventory.findIndex((it) => it.id === itemId && !it.used);
-      }
-
-      function hasUsableItem(itemId) {
-        return getUnusedItemIndex(itemId) >= 0;
-      }
-
-      function consumeItem(itemId) {
-        const idx = getUnusedItemIndex(itemId);
-        if (idx < 0) return null;
-        const it = state.inventory[idx];
-        it.used = true;
-        state.usedItems.push({ id: it.id, name: it.name, emoji: it.emoji, effect: it.effect, xpValue: it.xpValue, dimValue: it.dimValue, offerValue: it.offerValue, noteText: it.noteText, collectedAt: it.collectedAt, usedAt: Date.now() });
-        updateInvBadge();
-        return it;
-      }
-
-      function renderItemUseBtn(q, isScenario) {
-        const btnWrap = document.createElement("div");
-        btnWrap.className = "rpg-item-use-bar";
-        btnWrap.style.cssText = "margin:10px 0 6px;display:flex;gap:8px;flex-wrap:wrap;";
-
-        // 经验卷轴：仅用于情景题揭示最佳答案；
-        // 主观偏好题（preferenceTag）和真实自评题不允许使用，避免结果偏差
-        if (isScenario && !q.preferenceTag && (q.type === "single" || q.type === "multi") && hasUsableItem("xp_scroll")) {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "rpg-item-btn";
-          btn.innerHTML = `<span class="emoji">📜</span> 使用经验卷轴`;
-          btn.onclick = () => {
-            const it = consumeItem("xp_scroll");
-            if (!it) return;
-            const best = getBestOption(q);
-            if (best) {
-              // 高亮最佳选项
-              const targetBtn = qs(`#choices .rpg-choice[data-id="${best.id}"]`);
-              if (targetBtn) {
-                targetBtn.classList.add("hinted");
-                targetBtn.style.borderColor = "rgba(201,160,80,.7)";
-                targetBtn.style.background = "rgba(201,160,80,.12)";
-              }
-              showFeedbackBubble(`导师提示：「${best.label}」是当前最优解`, "positive");
-            } else {
-              showFeedbackBubble("导师提示：这道题没有明显最优解，凭直觉选吧", "neutral");
-            }
-            // 更新按钮状态
-            btn.remove();
-            if (!hasUsableItem("xp_scroll")) {
-              const all = qsa(".rpg-item-btn[data-item='xp_scroll']");
-              all.forEach((b) => b.remove());
-            }
-          };
-          btnWrap.appendChild(btn);
-        }
-        return btnWrap;
-      }
-
-      /* ===== 屏幕闪红 ===== */
-      function triggerScreenFlash() {
-        const flash = document.createElement("div");
-        flash.className = "rpg-screen-flash";
-        document.body.appendChild(flash);
-        setTimeout(() => flash.remove(), 700);
-      }
-
-      function triggerEventBanner(text = "⚡ 突发情境") {
-        const scene = qs("#rpgScene");
-        const banner = document.createElement("div");
-        banner.className = "rpg-event-banner";
-        banner.textContent = text;
-        scene.appendChild(banner);
-        setTimeout(() => banner.remove(), 1500);
-      }
-
-      /* ===== 随机掉落系统 ===== */
-      function tryRandomDrop() {
-        if (!state.dropsEnabled) return;
-        // 题后掉落触发概率：20%~60%（每次在区间内随机，避免过于频繁）
-        const triggerChance = 0.2 + Math.random() * 0.4;
-        if (Math.random() > triggerChance) return;
-        const roll = Math.random();
-        let cumulative = 0;
-        let drop = null;
-        for (const d of DROP_TABLE) {
-          cumulative += d.chance;
-          if (roll <= cumulative) { drop = d; break; }
-        }
-        if (!drop) return;
-        spawnDrop(drop);
-      }
-
-      function spawnDrop(drop) {
-        const el = document.createElement("div");
-        el.className = `rpg-drop-item ${drop.rarity}`;
-        el.textContent = drop.emoji;
-        const x = 40 + Math.random() * (window.innerWidth - 120);
-        el.style.left = `${x}px`;
-        el.style.top = "80px";
-        document.body.appendChild(el);
-
-        showLootToast(drop.msg);
-
-        const collect = () => {
-          if (el.classList.contains("collected")) return;
-          el.classList.add("collected");
-          collectDrop(drop);
-          setTimeout(() => el.remove(), 600);
-        };
-
-        el.onclick = collect;
-        // 3秒后自动收集
-        setTimeout(() => { if (el.parentNode && !el.classList.contains("collected")) collect(); }, 3000);
-      }
-
-      function showLootToast(text) {
-        const toast = document.createElement("div");
-        toast.className = "rpg-loot-toast";
-        toast.textContent = text;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2600);
-      }
-
-      function collectDrop(drop) {
-        const item = { ...drop, collectedAt: Date.now() };
-        if (drop.effect.xp) {
-          const amt = randInt(drop.effect.xp[0], drop.effect.xp[1]);
-          item.xpValue = amt;
-          state.xp += amt;
-        }
-        if (drop.effect.dimBonus) {
-          const bonus = randInt(drop.effect.dimBonus[0], drop.effect.dimBonus[1]);
-          item.dimValue = bonus;
-          state.buffs.push({ type: "dim", value: bonus, from: drop.name, emoji: drop.emoji });
-        }
-        if (drop.effect.offerProb) {
-          const prob = randInt(drop.effect.offerProb[0], drop.effect.offerProb[1]);
-          item.offerValue = prob;
-          state.buffs.push({ type: "offer", value: prob, from: drop.name, emoji: drop.emoji });
-        }
-        if (drop.effect.note) {
-          const notes = ["优先补GPA，它是硬通货", "实习经历比科研项目更值钱", "先定方向，再选学校", "语言成绩达标即可，不要刷分", "推荐信要找真正了解你的人"];
-          item.noteText = notes[Math.floor(Math.random() * notes.length)];
-        }
-        state.inventory.push(item);
-        updateHud();
-        updateInvBadge();
-      }
-
-      function randInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      }
-
-      /* ===== 抽卡系统 ===== */
-      async function showCardDraw() {
-        return new Promise((resolve) => {
-          let ov = qs("#drawOverlay");
-          if (!ov) {
-            ov = document.createElement("div");
-            ov.id = "drawOverlay";
-            ov.className = "rpg-draw-overlay";
-            document.body.appendChild(ov);
-          }
-          ov.innerHTML = `
-            <div class="rpg-draw-title">🎴 阶段奖励 · 抽一张卡</div>
-            <div class="rpg-draw-sub">三张卡中只有一张是你的命运之选</div>
-            <div class="rpg-card-row" id="cardRow"></div>
-          `;
-
-          const row = ov.querySelector("#cardRow");
-          clearChildren(row);
-
-          // 随机抽取3张卡（可重复稀有度，增加趣味性）
-          const cards = [];
-          for (let i = 0; i < 3; i++) {
-            const rarityRoll = Math.random();
-            let pool;
-            if (rarityRoll < 0.50) pool = CARD_POOL.filter(c => c.rarity === "common");
-            else if (rarityRoll < 0.78) pool = CARD_POOL.filter(c => c.rarity === "rare");
-            else if (rarityRoll < 0.94) pool = CARD_POOL.filter(c => c.rarity === "epic");
-            else pool = CARD_POOL.filter(c => c.rarity === "legendary");
-            if (pool.length === 0) pool = CARD_POOL;
-            cards.push(pool[Math.floor(Math.random() * pool.length)]);
-          }
-          // 确保至少有一张稀有或以上
-          if (cards.every(c => c.rarity === "common")) {
-            cards[1] = CARD_POOL.filter(c => c.rarity !== "common")[Math.floor(Math.random() * 5)];
-          }
-
-          cards.forEach((card, idx) => {
-            const cardEl = document.createElement("div");
-            cardEl.className = "rpg-card";
-            cardEl.innerHTML = `
-              <div class="rpg-card-inner">
-                <div class="rpg-card-face rpg-card-back"></div>
-                <div class="rpg-card-face rpg-card-front ${card.rarity}">
-                  <div class="rpg-card-emoji">${card.emoji}</div>
-                  <div class="rpg-card-name">${escapeHtml(card.name)}</div>
-                  <div class="rpg-card-desc">${escapeHtml(card.desc)}</div>
-                  <div class="rpg-card-rarity" style="color:${RARITY_COLORS[card.rarity]}">${RARITY_NAMES[card.rarity]}</div>
-                </div>
-              </div>
-            `;
-            cardEl.onclick = () => {
-              // 翻开所有卡
-              row.querySelectorAll(".rpg-card").forEach((c, i) => {
-                c.classList.add("flipped");
-                if (i !== idx) c.classList.add("not-picked");
-                else c.classList.add("picked");
-              });
-              // 应用效果
-              applyCardEffect(card);
-              // 显示获得提示
-              showLootToast(`获得 ${card.name}！${card.desc}`);
-              // 2秒后关闭
-              setTimeout(() => {
-                ov.classList.remove("show");
-                resolve();
-              }, 2200);
-            };
-            row.appendChild(cardEl);
-          });
-
-          requestAnimationFrame(() => ov.classList.add("show"));
-        });
-      }
-
-      function applyCardEffect(card) {
-        const eff = card.effect;
-        if (eff.xp) {
-          state.xp += eff.xp;
-        }
-        if (eff.dim && eff.bonus) {
-          state.buffs.push({ type: "dim", value: eff.bonus, from: card.name, emoji: card.emoji });
-        }
-        if (eff.allDim && eff.xp) {
-          state.buffs.push({ type: "allDim", value: eff.allDim, from: card.name, emoji: card.emoji });
-          state.xp += eff.xp;
-        }
-        state.inventory.push({ ...card, collectedAt: Date.now(), isCard: true });
-        updateHud();
-        updateInvBadge();
-      }
-
-      /* ===== 背包系统 ===== */
-      function updateInvBadge() {
-        const badge = qs("#invBadge");
-        const total = state.inventory.length;
-        if (total > 0) {
-          badge.textContent = total > 99 ? "99+" : total;
-          badge.classList.remove("rpg-hidden");
-        } else {
-          badge.classList.add("rpg-hidden");
-        }
-      }
-
-      function toggleInventory() {
-        let panel = qs("#invPanel");
-        if (!panel) {
-          panel = document.createElement("div");
-          panel.id = "invPanel";
-          panel.className = "rpg-inventory-panel";
-          document.body.appendChild(panel);
-        }
-        if (panel.classList.contains("show")) {
-          panel.classList.remove("show");
-          return;
-        }
-        renderInventory(panel);
-        panel.classList.add("show");
-        // 点击外部关闭
-        const closeOnOutside = (e) => {
-          if (!panel.contains(e.target) && e.target !== qs("#invBtn")) {
-            panel.classList.remove("show");
-            document.removeEventListener("click", closeOnOutside);
-          }
-        };
-        setTimeout(() => document.addEventListener("click", closeOnOutside), 50);
-      }
-
-      function renderInventory(panel) {
-        const buffsHtml = state.buffs.length > 0
-          ? `<div class="rpg-buff-row">${state.buffs.map(b => `<span class="rpg-buff-pill">${b.emoji} ${b.from} ${b.type === "dim" || b.type === "allDim" ? "+" + b.value : "+" + b.value + "%"}</span>`).join("")}</div>`
-          : "";
-
-        const itemsHtml = state.inventory.length > 0
-          ? state.inventory.slice().reverse().map(it => {
-            const isUsed = it.used;
-            const effectText = it.xpValue ? "+" + it.xpValue + " XP" : it.dimValue ? "+" + it.dimValue : it.offerValue ? "+" + it.offerValue + "%" : it.noteText ? "💡" : it.desc || "";
-            return `
-            <div class="rpg-inv-item ${isUsed ? 'used' : ''}">
-              <span class="emoji">${it.emoji}</span>
-              <span class="name">${escapeHtml(it.name)}</span>
-              <span class="effect">${effectText}${isUsed ? '<span class="used-tag">已使用</span>' : ''}</span>
-            </div>
-          `;
-          }).join("")
-          : `<div class="rpg-inv-empty">背包空空如也<br/>回答问题或完成阶段可获得奖励</div>`;
-
-        panel.innerHTML = `
-          <h4>🎒 背包 (${state.inventory.length})</h4>
-          ${buffsHtml}
-          <div style="margin-top:10px">${itemsHtml}</div>
-        `;
-      }
-
       function getOptionsForField(field) {
         if (field.options) return field.options;
         const ref = field.optionsRef;
         if (!ref) return [];
-        if (ref === "industries.id") return state.cfg.industries.map((i) => ({ id: i.id, label: `${i.icon} ${i.name}` }));
-        if (ref === "roles.id") return state.cfg.roles.map((r) => ({ id: r.id, label: `${r.icon} ${r.name}` }));
-        if (ref === "companyTypes.id") return state.cfg.companyTypes.map((c) => ({ id: c.id, label: `${c.icon} ${c.name}` }));
-        return [];
+        let opts = [];
+        if (ref === "industries.id") opts = state.cfg.industries.map((i) => ({ id: i.id, label: `${i.icon} ${i.name}` }));
+        else if (ref === "roles.id") opts = state.cfg.roles.map((r) => ({ id: r.id, label: `${r.icon} ${r.name}` }));
+        else if (ref === "companyTypes.id") opts = state.cfg.companyTypes.map((c) => ({ id: c.id, label: `${c.icon} ${c.name}` }));
+        opts.push({ id: "other", label: "其他" });
+        return opts;
       }
 
       function renderRcStep() {
@@ -730,6 +432,8 @@
 
           grid.appendChild(wrap);
         }
+        forceScrollTop();
+        qs("#rcPanel").scrollTop = 0;
       }
 
       function validateRcStep() {
@@ -800,6 +504,8 @@
         state.pendingAnswer = state.answers[q.id] ?? (q.type === "multi" ? [] : null);
         clearChildren(qs("#choices"));
 
+        forceScrollTop();
+
         const wrap = qs("#dialogueWrap");
         wrap.classList.remove("rpg-fade-in");
         void wrap.offsetWidth;
@@ -813,12 +519,13 @@
         qs("#nextBtn").disabled = false;
 
         renderChoices(q, isScenario);
+        forceScrollTop();
+        requestAnimationFrame(() => forceScrollTop());
+        setTimeout(() => forceScrollTop(), 50);
       }
 
       function renderChoices(q, isScenario) {
         const choicesEl = qs("#choices");
-        const itemBar = renderItemUseBtn(q, isScenario);
-        if (itemBar.childNodes.length > 0) choicesEl.appendChild(itemBar);
         if (q.type === "single") {
           for (const opt of q.options || []) {
             const isOther = opt.type === "text";
@@ -839,8 +546,6 @@
                 otherInp.querySelector("input,textarea")?.focus();
               }
               qs("#footerHint").textContent = "已选择，点「继续」";
-              state.xp += 3;
-              updateHud();
               const fb = pickFeedbackForAnswer(q, opt.id);
               if (fb) showFeedbackBubble(fb[0], fb[1]);
             };
@@ -887,8 +592,6 @@
               state.pendingAnswer = [...saved];
               btn.classList.toggle("selected");
               if (!wasSelected) {
-                state.xp += 2;
-                updateHud();
                 const fb = pickFeedbackForAnswer(q, opt.id);
                 if (fb) showFeedbackBubble(fb[0], fb[1]);
               }
@@ -918,8 +621,6 @@
             if (v === "") return;
             state.pendingAnswer = Number(v);
             qs("#footerHint").textContent = "已记录，点「继续」";
-            state.xp += 2;
-            updateHud();
             const fb = pickFeedbackForAnswer(q, "num_" + v);
             if (fb) showFeedbackBubble(fb[0], fb[1]);
           };
@@ -944,8 +645,6 @@
                 el.classList.toggle("on", i < s);
               });
               qs("#footerHint").textContent = "已评分，点「继续」";
-              state.xp += s;
-              updateHud();
               const msgs = ["", "还有提升空间", "中等水平", "不错", "很出色", "顶级水准"];
               const t = s >= 4 ? "positive" : s >= 3 ? "neutral" : "warn";
               showFeedbackBubble(msgs[s] || `${s} 星`, t);
@@ -999,13 +698,12 @@
       }
 
       async function renderGateClearOverlay(gate) {
-        state.xp += 35 + state.gateIdx * 5;
         const phaseNames = ["学业评估", "跨度检验", "方向定型", "执行打磨"];
         const phase = phaseNames[state.gateIdx] || `第${state.gateIdx + 1}步`;
         await showRpgOverlay({
           rank: "🔥",
           title: `${phase} 完成`,
-          sub: `积分 +${35 + state.gateIdx * 5}\n诊断持续深入中…`,
+          sub: "诊断持续深入中…",
           btnText: "下一步 →",
         });
       }
@@ -1022,56 +720,6 @@
         qs("#endIntro").textContent = end.subtitle;
         const grid = qs("#endFieldGrid");
         clearChildren(grid);
-
-        // === 终章道具使用区 ===
-        const itemSection = document.createElement("div");
-        itemSection.style.cssText = "margin-bottom:14px;padding:12px;border-radius:4px;border:1px solid var(--border);background:rgba(255,255,255,.03);";
-        let itemHtml = `<h4 style="margin:0 0 10px 0;font-family:var(--font-display);letter-spacing:.04em;font-size:14px;">🎒 终章道具</h4><div style="display:flex;gap:10px;flex-wrap:wrap;">`;
-
-        // 幸运符
-        if (hasUsableItem("lucky_charm")) {
-          const charm = state.inventory.find((it) => it.id === "lucky_charm" && !it.used);
-          const val = charm?.offerValue || 3;
-          itemHtml += `
-            <label class="rpg-item-toggle">
-              <input type="checkbox" id="useLuckyCharm" />
-              <span>🍀 使用幸运符（录取概率 +${val}%）</span>
-            </label>`;
-        }
-        // 属性石
-        const attrStones = state.inventory.filter((it) => it.id === "attr_stone" && !it.used);
-        if (attrStones.length > 0) {
-          for (const stone of attrStones) {
-            const dimSelect = `<select id="attrStone_${stone.collectedAt}" style="padding:4px 8px;border-radius:2px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-size:12px;">
-              <option value="">选择维度…</option>
-              <option value="academic">学业</option>
-              <option value="gap">跨度</option>
-              <option value="experience">经历</option>
-              <option value="clarity">方向</option>
-              <option value="execution">执行</option>
-              <option value="fit">匹配</option>
-            </select>`;
-            itemHtml += `
-              <label class="rpg-item-toggle">
-                <input type="checkbox" data-stone="${stone.collectedAt}" class="attr-stone-cb" />
-                <span>💎 使用属性石 +${stone.dimValue || 5} ${dimSelect}</span>
-              </label>`;
-          }
-        }
-        // 导师便签
-        if (hasUsableItem("mentor_note")) {
-          itemHtml += `
-          <label class="rpg-item-toggle">
-            <input type="checkbox" id="useMentorNote" />
-            <span>📝 使用导师便签（报告增加额外洞察）</span>
-          </label>`;
-        }
-        if (!hasUsableItem("lucky_charm") && attrStones.length === 0 && !hasUsableItem("mentor_note")) {
-          itemHtml += `<span style="color:var(--muted);font-size:12px;">背包中没有可用的终章道具</span>`;
-        }
-        itemHtml += "</div>";
-        itemSection.innerHTML = itemHtml;
-        grid.appendChild(itemSection);
 
         for (const f of end.fields) {
           const wrap = document.createElement("div");
@@ -1110,6 +758,8 @@
         qs("#backBtn").style.visibility = "visible";
         renderChapterBar();
         updateHud();
+        forceScrollTop();
+        qs("#endPanel").scrollTop = 0;
       }
 
       async function submitAssessment() {
@@ -1121,32 +771,6 @@
         const contactType = state.answers.contact_type || "wechat";
         const budget = state.answers.budget || null;
         const invitedBy = localStorage.getItem("inviteCode") || null;
-
-        // 处理终章道具使用
-        const itemEffects = { offerBoost: 0, dimBoosts: {}, extraNotes: [] };
-        if (qs("#useLuckyCharm")?.checked) {
-          const it = consumeItem("lucky_charm");
-          if (it) itemEffects.offerBoost = it.offerValue || 3;
-        }
-        qsa(".attr-stone-cb").forEach((cb) => {
-          if (cb.checked) {
-            const stoneTs = cb.dataset.stone;
-            const sel = qs(`#attrStone_${stoneTs}`);
-            const dim = sel?.value;
-            if (dim) {
-              const stone = state.inventory.find((it) => it.id === "attr_stone" && !it.used && String(it.collectedAt) === stoneTs);
-              if (stone) {
-                stone.used = true;
-                state.usedItems.push({ id: stone.id, name: stone.name, emoji: stone.emoji, effect: stone.effect, dimValue: stone.dimValue, targetDim: dim, usedAt: Date.now() });
-                itemEffects.dimBoosts[dim] = (itemEffects.dimBoosts[dim] || 0) + (stone.dimValue || 5);
-              }
-            }
-          }
-        });
-        if (qs("#useMentorNote")?.checked) {
-          const it = consumeItem("mentor_note");
-          if (it) itemEffects.extraNotes.push(it.noteText || "导师的额外建议");
-        }
 
         state.phase = "submitting";
         qs("#nextBtn").disabled = true;
@@ -1170,7 +794,7 @@
           state.answers._lead_id = lead.id;
           const asm = await api("/api/assessments", {
             method: "POST",
-            body: { leadId: lead.id, answers: state.answers, budget, itemEffects, usedItems: state.usedItems },
+            body: { leadId: lead.id, answers: state.answers, budget },
           });
           track("assessment_completed", { assessmentId: asm.id, llmGenerated: asm.llmGenerated });
           hideLoadingOverlay();
@@ -1197,6 +821,7 @@
         qs("#nextBtn").textContent = "继续 →";
         qs("#backBtn").style.visibility = "visible";
         showGateIntroThenItem();
+        forceScrollTop();
       }
 
       async function showGateIntroThenItem() {
@@ -1215,6 +840,7 @@
         clearChildren(qs("#choices"));
         renderChapterBar();
         updateHud();
+        forceScrollTop();
         state.typing = true;
         qs("#nextBtn").disabled = true;
         await typewriter(qs("#dialogueText"), gate.intro || "（开始本步诊断）", { speed: 18 });
@@ -1222,13 +848,14 @@
         qs("#nextBtn").disabled = false;
         qs("#footerHint").textContent = "点「继续」开始第一题";
         state._needGateItemFirstRender = true;
+        forceScrollTop();
+        requestAnimationFrame(() => forceScrollTop());
+        setTimeout(() => forceScrollTop(), 50);
       }
 
       async function advanceFromGate() {
         const gate = state.qb.gates[state.gateIdx];
         await renderGateClearOverlay(gate);
-        // 抽卡
-        await showCardDraw();
         const next = state.gateIdx + 1;
         if (next >= state.qb.gates.length) {
           renderEndChapter();
@@ -1267,8 +894,6 @@
           const err = validateGateAnswer(q, ans);
           if (err) { qs("#footerHint").textContent = err; return; }
           state.answers[q.id] = ans;
-          // 回答问题后触发随机掉落
-          tryRandomDrop();
           if (state.gateItemIdx < state.gateItems.length - 1) {
             state.gateItemIdx += 1;
             await renderGateItem();
@@ -1281,11 +906,6 @@
           await submitAssessment();
           return;
         }
-      };
-
-      qs("#invBtn").onclick = (e) => {
-        e.stopPropagation();
-        toggleInventory();
       };
 
       qs("#backBtn").onclick = async () => {
@@ -1338,7 +958,7 @@
             ov = document.createElement("div");
             ov.id = "loadingOverlay";
             ov.className = "rpg-overlay";
-            ov.innerHTML = `<div class="rpg-overlay-card"><div class="rpg-overlay-rank">🔥</div><h3 class="rpg-overlay-title" id="loadingTitle"></h3><p class="rpg-overlay-sub" id="loadingStep" style="min-height:64px"></p></div>`;
+            ov.innerHTML = `<div class="rpg-overlay-card"><div class="rpg-overlay-rank">🔥</div><h3 class="rpg-overlay-title" id="loadingTitle"></h3><p class="rpg-overlay-sub" id="loadingStep" style="min-height:64px"></p><p class="rpg-overlay-sub" style="font-size:12px;color:var(--accent2);margin-top:10px">⚠️ 不要关闭页面或退出，图谱正在生成中…</p></div>`;
             document.body.appendChild(ov);
           }
           ov.querySelector("#loadingTitle").textContent = title;

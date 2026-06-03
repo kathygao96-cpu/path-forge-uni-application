@@ -61,55 +61,28 @@ function isAvailable() {
 
 function buildSystemPrompt({ industries, roles, companyTypes, companies, programs }) {
   const knowledge = loadKnowledge();
+  // 缩减数据集体积，避免请求体过大导致网关拒绝或超时
+  const limit = (arr, n) => arr.slice(0, n);
   const dataDump = JSON.stringify(
     {
       industries: industries.map((i) => ({
-        id: i.id,
-        name: i.name,
-        rating: i.rating,
-        tagline: i.tagline,
-        salaryBand: i.salaryBand,
-        environment: i.environment,
-        bestFitMajors: i.bestFitMajors,
-        warnings: i.warnings,
+        id: i.id, name: i.name, rating: i.rating, tagline: i.tagline,
+        salaryBand: i.salaryBand, bestFitMajors: i.bestFitMajors,
       })),
       roles: roles.map((r) => ({
-        id: r.id,
-        name: r.name,
-        rating: r.rating,
-        fitIndustries: r.fitIndustries,
-        fitMajors: r.fitMajors,
-        lifestyleTags: r.lifestyleTags,
-        salaryBand: r.salaryBand,
-        friendNote: r.friendNote,
+        id: r.id, name: r.name, rating: r.rating, fitIndustries: r.fitIndustries,
+        lifestyleTags: r.lifestyleTags, friendNote: r.friendNote,
       })),
       companyTypes: companyTypes.map((c) => ({
-        id: c.id,
-        name: c.name,
-        stability: c.stability,
-        salary: c.salary,
-        wlb: c.wlb,
-        hukou: c.hukou,
-        salaryBand: c.salaryBand,
+        id: c.id, name: c.name, stability: c.stability, salary: c.salary,
+        wlb: c.wlb, hukou: c.hukou, salaryBand: c.salaryBand,
       })),
-      companies: companies.map((c) => ({
-        name: c.name,
-        industry: c.industry,
-        companyType: c.companyType,
-        rating: c.rating,
-        tag: c.tag,
-        salary: c.salary,
-        locations: c.locations,
+      companies: limit(companies, 20).map((c) => ({
+        name: c.name, industry: c.industry, tag: c.tag, salary: c.salary, locations: c.locations,
       })),
-      programs: programs.map((p) => ({
-        id: p.id,
-        country: p.country,
-        school: p.school,
-        name: p.name,
-        track: p.track,
-        fitIndustries: p.fitIndustries,
-        fitRoles: p.fitRoles,
-        tier: p.tier,
+      programs: limit(programs, 30).map((p) => ({
+        id: p.id, country: p.country, school: p.school, name: p.name,
+        track: p.track, tier: p.tier,
       })),
     },
     null,
@@ -212,7 +185,7 @@ async function generateReport({ profile, answers, scores, scenarioAnswers, weakD
 
   const model = options.model || DEFAULT_MODEL;
   const maxTokens = options.maxTokens || 4096;
-  const timeoutMs = options.timeoutMs || 60000;
+  const timeoutMs = options.timeoutMs || 120000;
 
   const systemPrompt = buildSystemPrompt(dataset);
   const userMessage = buildUserMessage({ profile, answers, scores, scenarioAnswers, weakDim, strongDim });
